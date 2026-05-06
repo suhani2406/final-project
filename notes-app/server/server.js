@@ -12,7 +12,10 @@ const noteRoutes = require("./routes/noteRoutes");
 
 
 const app = express(); // ✅ FIRST create app
-app.use(cors());
+app.use(cors({
+  origin: "https://final-project-weld-theta.vercel.app",
+  credentials: true
+}));
 app.use(express.json());
 app.use("/api/notes", noteRoutes);
 
@@ -38,6 +41,8 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.log(err));
 
 // SERVER
-app.listen(5001, () => {
-  console.log("Server running on port 5001");
+const PORT = process.env.PORT || 5001;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
