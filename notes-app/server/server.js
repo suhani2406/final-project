@@ -12,8 +12,13 @@ const noteRoutes = require("./routes/noteRoutes");
 
 
 const app = express(); // ✅ FIRST create app
+const cors = require("cors");
+
 app.use(cors({
-  origin: "https://final-project-weld-theta.vercel.app",
+  origin: [
+    "http://localhost:3000",
+    "https://final-project-weld-theta.vercel.app"
+  ],
   credentials: true
 }));
 app.use(express.json());
