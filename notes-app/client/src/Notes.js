@@ -11,7 +11,7 @@ const Notes = () => {
   // ✅ GET NOTES
   const fetchNotes = async () => {
     try {
-      const res = await axios.get("http://localhost:5001/api/notes", {
+      const res = await axios.get("https://final-project-3-qemw.onrender.com/api/notes", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

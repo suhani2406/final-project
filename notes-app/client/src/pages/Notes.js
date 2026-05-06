@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api/axios";
+
 
 import {
   Container,
@@ -20,9 +21,9 @@ const Notes = () => {
   const token = localStorage.getItem("token");
 
   const fetchNotes = async () => {
-    const res = await axios.get("http://localhost:5001/api/notes", {
+    const res = await API.get("/notes"); {
       headers: { Authorization: `Bearer ${token}` }
-    });
+    };
     setNotes(res.data);
   };
 
@@ -30,7 +31,7 @@ const Notes = () => {
     if (!title || !content) return;
 
     await axios.post(
-      "http://localhost:5001/api/notes",
+      "https://final-project-3-qemw.onrender.com/api",
       { title, content },
       { headers: { Authorization: `Bearer ${token}` } }
     );
