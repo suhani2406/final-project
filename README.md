@@ -5,7 +5,7 @@ A full-stack productivity platform inspired by Notion, built to manage notes, fo
 ---
 
 ## 🚀 Live Demo
-> Deployed Application: 
+> Deployed Application: https://final-project-3-qemw.onrender.com/
 
 ---
 
