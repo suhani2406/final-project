@@ -13,7 +13,6 @@ const noteRoutes = require("./routes/noteRoutes");
 
 const app = express(); // ✅ FIRST create app
 const cors = require("cors");
-
 app.use(cors({
   origin: [
     "http://localhost:3000",
