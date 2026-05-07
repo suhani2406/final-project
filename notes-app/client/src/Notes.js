@@ -1,57 +1,48 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api/axios";
+
+import {
+  Container,
+  TextField,
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  Grid
+} from "@mui/material";
 
 const Notes = () => {
   const [notes, setNotes] = useState([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  const token = localStorage.getItem("token");
-
-  // ✅ GET NOTES
   const fetchNotes = async () => {
     try {
-      const res = await axios.get("https://final-project-3-qemw.onrender.com/api/notes", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await API.get("/notes");
       setNotes(res.data);
     } catch (err) {
       console.log(err);
     }
   };
 
-  // ✅ CREATE NOTE
-  const handleAddNote = async () => {
+  const addNote = async () => {
+    if (!title || !content) return;
+
     try {
-      await axios.post(
-        "http://localhost:5001/api/notes",
-        { title, content },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await API.post("/notes", { title, content });
 
       setTitle("");
       setContent("");
-      fetchNotes(); // refresh
+      fetchNotes();
     } catch (err) {
       console.log(err);
     }
   };
 
-  // ✅ DELETE NOTE
-  const handleDelete = async (id) => {
+  const deleteNote = async (id) => {
     try {
-      await axios.delete(`http://localhost:5001/api/notes/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      await API.delete(`/notes/${id}`);
       fetchNotes();
     } catch (err) {
       console.log(err);
@@ -63,36 +54,58 @@ const Notes = () => {
   }, []);
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>My Notes</h2>
+    <Container maxWidth="md">
+      <Typography variant="h4" align="center" gutterBottom sx={{ mt: 3 }}>
+        📝 My Notes
+      </Typography>
 
-      {/* Add Note */}
-      <input
-        type="text"
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <br />
-      <textarea
-        placeholder="Content"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-      />
-      <br />
-      <button onClick={handleAddNote}>Add Note</button>
+      <Box sx={{ p: 3, boxShadow: 3, borderRadius: 2, mb: 4 }}>
+        <TextField
+          fullWidth
+          label="Title"
+          margin="normal"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
 
-      <hr />
+        <TextField
+          fullWidth
+          label="Content"
+          multiline
+          rows={3}
+          margin="normal"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+        />
 
-      {/* Notes List */}
-      {notes.map((note) => (
-        <div key={note._id} style={{ marginBottom: "10px" }}>
-          <h3>{note.title}</h3>
-          <p>{note.content}</p>
-          <button onClick={() => handleDelete(note._id)}>Delete</button>
-        </div>
-      ))}
-    </div>
+        <Button variant="contained" fullWidth sx={{ mt: 2 }} onClick={addNote}>
+          Add Note
+        </Button>
+      </Box>
+
+      <Grid container spacing={2}>
+        {notes.map((note) => (
+          <Grid item xs={12} sm={6} key={note._id}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6">{note.title}</Typography>
+                <Typography variant="body2" sx={{ mb: 2 }}>
+                  {note.content}
+                </Typography>
+
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => deleteNote(note._id)}
+                >
+                  Delete
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
   );
 };
 

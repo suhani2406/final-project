@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from "react";
 import API from "../api/axios";
 
-
 import {
-  Container,
+  Box,
+  Typography,
   TextField,
   Button,
-  Card,
-  CardContent,
-  Typography,
-  Box,
+  Paper,
   Grid
 } from "@mui/material";
 
@@ -18,23 +15,19 @@ const Notes = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  const token = localStorage.getItem("token");
-
   const fetchNotes = async () => {
-    const res = await API.get("/notes"); {
-      headers: { Authorization: `Bearer ${token}` }
-    };
-    setNotes(res.data);
+    try {
+      const res = await API.get("/notes");
+      setNotes(res.data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const addNote = async () => {
     if (!title || !content) return;
 
-    await axios.post(
-      "https://final-project-3-qemw.onrender.com/api",
-      { title, content },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+    await API.post("/notes", { title, content });
 
     setTitle("");
     setContent("");
@@ -42,9 +35,7 @@ const Notes = () => {
   };
 
   const deleteNote = async (id) => {
-    await axios.delete(`http://localhost:5001/api/notes/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    await API.delete(`/notes/${id}`);
     fetchNotes();
   };
 
@@ -53,74 +44,94 @@ const Notes = () => {
   }, []);
 
   return (
-    <Container maxWidth="md">
-      {/* Header */}
-      <Typography variant="h4" align="center" gutterBottom sx={{ mt: 3 }}>
-        📝 My Notes
-      </Typography>
+    <Box sx={{ display: "flex", height: "100vh", background: "#f4f1ec" }}>
 
-      {/* Input Section */}
-      <Box
-        sx={{
-          p: 3,
-          boxShadow: 3,
-          borderRadius: 2,
-          mb: 4,
-          backgroundColor: "#f9f9f9"
-        }}
-      >
-        <TextField
-          fullWidth
-          label="Title"
-          margin="normal"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
+      {/* 🔥 SIDEBAR */}
+      <Box sx={{
+        width: 250,
+        p: 3,
+        background: "#fff",
+        borderRight: "1px solid #eee"
+      }}>
+        <Typography variant="h6" sx={{ mb: 3 }}>
+          📒 YumeNote
+        </Typography>
 
-        <TextField
-          fullWidth
-          label="Content"
-          multiline
-          rows={3}
-          margin="normal"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
-
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{ mt: 2 }}
-          onClick={addNote}
-        >
-          Add Note
-        </Button>
+        <Typography sx={{ mb: 2 }}>Dashboard</Typography>
+        <Typography sx={{ mb: 2 }}>Notes</Typography>
+        <Typography sx={{ mb: 2 }}>Folders</Typography>
+        <Typography sx={{ mb: 2 }}>Favorites</Typography>
       </Box>
 
-      {/* Notes Grid */}
-      <Grid container spacing={2}>
-        {notes.map((note) => (
-          <Grid item xs={12} sm={6} key={note._id}>
-            <Card sx={{ height: "100%", boxShadow: 3 }}>
-              <CardContent>
+      {/* 🔥 MAIN AREA */}
+      <Box sx={{ flex: 1, p: 4 }}>
+
+        {/* HEADER */}
+        <Typography variant="h4" sx={{ mb: 2 }}>
+          ✨ My Notes
+        </Typography>
+
+        {/* INPUT */}
+        <Paper sx={{ p: 3, mb: 3, borderRadius: 3 }}>
+          <TextField
+            fullWidth
+            label="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+
+          <TextField
+            fullWidth
+            multiline
+            rows={3}
+            label="Write something..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+
+          <Button variant="contained" onClick={addNote}>
+            Add Note
+          </Button>
+        </Paper>
+
+        {/* NOTES */}
+        <Grid container spacing={2}>
+          {notes.map((note) => (
+            <Grid item xs={12} md={6} key={note._id}>
+              <Paper sx={{ p: 2, borderRadius: 3 }}>
                 <Typography variant="h6">{note.title}</Typography>
-                <Typography variant="body2" sx={{ mb: 2 }}>
-                  {note.content}
-                </Typography>
+                <Typography sx={{ mb: 2 }}>{note.content}</Typography>
 
                 <Button
-                  variant="outlined"
                   color="error"
                   onClick={() => deleteNote(note._id)}
                 >
                   Delete
                 </Button>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </Container>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+
+      {/* 🔥 RIGHT PANEL */}
+      <Box sx={{
+        width: 250,
+        p: 3,
+        background: "#fff",
+        borderLeft: "1px solid #eee"
+      }}>
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          Tags
+        </Typography>
+
+        <Typography>Work</Typography>
+        <Typography>Personal</Typography>
+        <Typography>Ideas</Typography>
+      </Box>
+    </Box>
   );
 };
 

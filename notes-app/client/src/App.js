@@ -1,58 +1,35 @@
-// // import { BrowserRouter, Routes, Route } from "react-router-dom";
-// // import Login from "./pages/Login";
-// // import Notes from "./pages/Notes";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
-// // function App() {
-// //   return (
-// //     <BrowserRouter>
-// //       <Routes>
-// //         <Route path="/" element={<Login />} />
-// //         <Route path="/notes" element={<Notes />} />
-// //       </Routes>
-// //     </BrowserRouter>
-// //   );
-// // }
-
-// // export default App;
-// import "./styles/layout.css";
-
-// import Sidebar from "./components/Sidebar";
-// import Header from "./components/Header";
-// import Editor from "./components/Editor";
-// import RightPanel from "./components/RightPanel";
-
-// function App() {
-//   return (
-//     <div className="app">
-//       <Sidebar />
-
-//       <div className="main">
-//         <Header />
-
-//         <div className="content">
-//           <Editor />
-//           <RightPanel />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default App;
-
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import Notes from "./pages/Notes";
+
+// 🔒 Protected Route
+const PrivateRoute = ({ children }) => {
+  const token = localStorage.getItem("token");
+  return token ? children : <Navigate to="/" />;
+};
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/login" element={<Login />} />
+
+        {/* Login Page */}
+        <Route path="/" element={<Login />} />
+
+        {/* Protected Notes Page */}
+        <Route
+          path="/notes"
+          element={
+            <PrivateRoute>
+              <Notes />
+            </PrivateRoute>
+          }
+        />
+
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 
