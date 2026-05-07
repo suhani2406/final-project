@@ -27,16 +27,24 @@ const Notes = () => {
   const addNote = async () => {
     if (!title || !content) return;
 
-    await API.post("/notes", { title, content });
+    try {
+      await API.post("/notes", { title, content });
 
-    setTitle("");
-    setContent("");
-    fetchNotes();
+      setTitle("");
+      setContent("");
+      fetchNotes();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const deleteNote = async (id) => {
-    await API.delete(`/notes/${id}`);
-    fetchNotes();
+    try {
+      await API.delete(`/notes/${id}`);
+      fetchNotes();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   useEffect(() => {
@@ -44,69 +52,209 @@ const Notes = () => {
   }, []);
 
   return (
-    <Box sx={{ display: "flex", height: "100vh", background: "#f4f1ec" }}>
+    <Box
+      sx={{
+        display: "flex",
+        minHeight: "100vh",
+        background: "linear-gradient(to bottom right, #f8f5f0, #efe7dc)",
+        fontFamily: "Inter"
+      }}
+    >
+      {/* 🌸 SIDEBAR */}
+      <Box
+        sx={{
+          width: "240px",
+          background: "#fffaf5",
+          padding: "30px",
+          borderRight: "1px solid #ece7df",
+          display: "flex",
+          flexDirection: "column",
+          gap: "25px"
+        }}
+      >
+        <Box
+  sx={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "30px"
+  }}
+>
+  <Typography
+    variant="h4"
+    sx={{
+      fontWeight: "800",
+      color: "#2f2f2f"
+    }}
+  >
+    My Creative Space ✨
+  </Typography>
 
-      {/* 🔥 SIDEBAR */}
-      <Box sx={{
-        width: 250,
-        p: 3,
-        background: "#fff",
-        borderRight: "1px solid #eee"
-      }}>
-        <Typography variant="h6" sx={{ mb: 3 }}>
-          📒 YumeNote
-        </Typography>
+  <Paper
+    elevation={0}
+    sx={{
+      padding: "10px 18px",
+      borderRadius: "16px",
+      background: "rgba(255,255,255,0.5)",
+      backdropFilter: "blur(12px)"
+    }}
+  >
+    🌿 Focus Mode
+  </Paper>
+</Box>
 
-        <Typography sx={{ mb: 2 }}>Dashboard</Typography>
-        <Typography sx={{ mb: 2 }}>Notes</Typography>
-        <Typography sx={{ mb: 2 }}>Folders</Typography>
-        <Typography sx={{ mb: 2 }}>Favorites</Typography>
+        <Box>
+          <Typography sx={menuStyle}>🏠 Dashboard</Typography>
+          <Typography sx={menuStyle}>📝 Notes</Typography>
+          <Typography sx={menuStyle}>📁 Folders</Typography>
+          <Typography sx={menuStyle}>⭐ Favorites</Typography>
+        </Box>
+
+        <Paper
+          elevation={0}
+          sx={{
+            background: "#f7efe7",
+            padding: "18px",
+            borderRadius: "18px",
+            marginTop: "auto"
+          }}
+        >
+          <Typography fontWeight="600">
+            Daily Inspiration ✨
+          </Typography>
+
+          <Typography
+            sx={{
+              fontSize: "14px",
+              marginTop: "10px",
+              color: "#666"
+            }}
+          >
+            "Small progress is still progress."
+          </Typography>
+        </Paper>
       </Box>
 
-      {/* 🔥 MAIN AREA */}
-      <Box sx={{ flex: 1, p: 4 }}>
-
-        {/* HEADER */}
-        <Typography variant="h4" sx={{ mb: 2 }}>
-          ✨ My Notes
+      {/* 🌸 MAIN CONTENT */}
+      <Box
+        sx={{
+          flex: 1,
+          padding: "40px",
+          overflowY: "auto"
+        }}
+      >
+        <Typography
+          variant="h4"
+          sx={{
+            fontWeight: "700",
+            color: "#2f2f2f",
+            marginBottom: "30px"
+          }}
+        >
+          My Creative Space ✨
         </Typography>
 
-        {/* INPUT */}
-        <Paper sx={{ p: 3, mb: 3, borderRadius: 3 }}>
+        {/* NOTE CREATOR */}
+        <Paper
+          elevation={0}
+          sx={{
+            padding: "30px",
+            borderRadius: "28px",
+            background: "#fffaf5",
+            marginBottom: "35px",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.05)"
+          }}
+        >
           <TextField
             fullWidth
-            label="Title"
+            placeholder="Note title..."
+            variant="outlined"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            sx={{ mb: 2 }}
+            sx={{
+              marginBottom: "20px",
+              background: "white",
+              borderRadius: "14px"
+            }}
           />
 
           <TextField
             fullWidth
             multiline
-            rows={3}
-            label="Write something..."
+            rows={4}
+            placeholder="Write your thoughts..."
+            variant="outlined"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            sx={{ mb: 2 }}
+            sx={{
+              marginBottom: "20px",
+              background: "white",
+              borderRadius: "14px"
+            }}
           />
 
-          <Button variant="contained" onClick={addNote}>
-            Add Note
+          <Button
+            variant="contained"
+            onClick={addNote}
+            sx={{
+              background: "#d97757",
+              padding: "12px 24px",
+              borderRadius: "14px",
+              textTransform: "none",
+              fontWeight: "600",
+              fontSize: "15px"
+            }}
+          >
+            Save Note
           </Button>
         </Paper>
 
-        {/* NOTES */}
-        <Grid container spacing={2}>
+        {/* NOTES GRID */}
+        <Grid container spacing={3}>
           {notes.map((note) => (
-            <Grid item xs={12} md={6} key={note._id}>
-              <Paper sx={{ p: 2, borderRadius: 3 }}>
-                <Typography variant="h6">{note.title}</Typography>
-                <Typography sx={{ mb: 2 }}>{note.content}</Typography>
+            <Grid item xs={12} md={6} lg={4} key={note._id}>
+              <Paper
+                elevation={0}
+                sx={{
+                  padding: "24px",
+                  borderRadius: "24px",
+                  background: "#fffaf5",
+                  minHeight: "220px",
+                  boxShadow: "0 10px 25px rgba(0,0,0,0.04)",
+                  transition: "0.3s",
+                  "&:hover": {
+                    transform: "translateY(-5px)"
+                  }
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: "700",
+                    marginBottom: "12px",
+                    color: "#2f2f2f"
+                  }}
+                >
+                  {note.title}
+                </Typography>
+
+                <Typography
+                  sx={{
+                    color: "#666",
+                    lineHeight: "1.7",
+                    marginBottom: "20px"
+                  }}
+                >
+                  {note.content}
+                </Typography>
 
                 <Button
-                  color="error"
                   onClick={() => deleteNote(note._id)}
+                  sx={{
+                    color: "#d97757",
+                    textTransform: "none",
+                    fontWeight: "600"
+                  }}
                 >
                   Delete
                 </Button>
@@ -116,23 +264,86 @@ const Notes = () => {
         </Grid>
       </Box>
 
-      {/* 🔥 RIGHT PANEL */}
-      <Box sx={{
-        width: 250,
-        p: 3,
-        background: "#fff",
-        borderLeft: "1px solid #eee"
-      }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Tags
+      {/* 🌸 RIGHT PANEL */}
+      <Box
+        sx={{
+          width: "260px",
+          padding: "30px",
+          background: "#fffaf5",
+          borderLeft: "1px solid #ece7df"
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{
+            marginBottom: "20px",
+            fontWeight: "700"
+          }}
+        >
+          Focus Mode 🌿
         </Typography>
 
-        <Typography>Work</Typography>
-        <Typography>Personal</Typography>
-        <Typography>Ideas</Typography>
+        <Paper
+          elevation={0}
+          sx={{
+            padding: "20px",
+            borderRadius: "20px",
+            background: "#f7efe7",
+            marginBottom: "20px"
+          }}
+        >
+          <Typography fontWeight="600">
+            Today's Goal
+          </Typography>
+
+          <Typography
+            sx={{
+              marginTop: "10px",
+              color: "#666",
+              fontSize: "14px"
+            }}
+          >
+            Finish your full stack project UI ✨
+          </Typography>
+        </Paper>
+
+        <Paper
+          elevation={0}
+          sx={{
+            padding: "20px",
+            borderRadius: "20px",
+            background: "#f7efe7"
+          }}
+        >
+          <Typography fontWeight="600">
+            Mood Board 🎨
+          </Typography>
+
+          <Typography
+            sx={{
+              marginTop: "10px",
+              color: "#666",
+              fontSize: "14px"
+            }}
+          >
+            Warm tones, calm productivity, soft design.
+          </Typography>
+        </Paper>
       </Box>
     </Box>
   );
+};
+
+const menuStyle = {
+  padding: "12px 18px",
+  borderRadius: "14px",
+  cursor: "pointer",
+  fontWeight: "500",
+  color: "#444",
+  transition: "0.3s",
+  "&:hover": {
+    background: "#f7efe7"
+  }
 };
 
 export default Notes;
