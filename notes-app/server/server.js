@@ -1,4 +1,5 @@
  //if issue like this happen like server showing running intermnal but in reality we cant get pong so just change the local host number to 5001 or any other number and then try to ping localhost:5001/ping and you will get pong response. This is because sometimes the port 5000 is already occupied by some other process and hence our server is not able to start properly.
+ const aiRoutes = require("./routes/aiRoutes");
  console.log("RUNNING CORRECT SERVER FILE");
 
 require("dotenv").config();
