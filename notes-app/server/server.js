@@ -7,6 +7,17 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+// ✅ CORS (SAFE VERSION - works everywhere)
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://final-project-3-qemw.onrender.com"
+    ],
+    credentials: true,
+  })
+);
+app.options("*", cors());
 
 // ROUTES
 const authRoutes = require("./routes/authRoutes");
@@ -16,11 +27,6 @@ const authMiddleware = require("./middleware/authMiddleware");
 const app = express();
 app.use("/api/ai", aiRoutes);
 
-// ✅ CORS (SAFE VERSION - works everywhere)
-app.use(cors({
-  origin: true, // allows all origins (fixes your error)
-  credentials: true
-}));
 
 // ✅ MIDDLEWARE
 app.use(express.json());
