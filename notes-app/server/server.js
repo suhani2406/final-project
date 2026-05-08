@@ -14,6 +14,7 @@ const noteRoutes = require("./routes/noteRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
 
 const app = express();
+app.use("/api/ai", aiRoutes);
 
 // ✅ CORS (SAFE VERSION - works everywhere)
 app.use(cors({
