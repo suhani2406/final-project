@@ -1,70 +1,97 @@
 const express = require("express");
 const router = express.Router();
+
 const multer = require("multer");
 const pdfParse = require("pdf-parse");
-const axios = require("axios");
-const fs = require("fs");
 
-const upload = multer({ dest: "uploads/" });
+const axios = require("axios");
+
+const upload = multer();
 
 router.post(
   "/summarize",
   upload.single("pdf"),
+
   async (req, res) => {
+
     try {
-      const dataBuffer = fs.readFileSync(req.file.path);
 
-      const pdfData = await pdfParse(dataBuffer);
+      if (!req.file) {
 
-      const text = pdfData.text;
+        return res.status(400).json({
+          error: "No PDF uploaded",
+        });
+      }
+
+      // PARSE PDF
+
+      const data = await pdfParse(
+        req.file.buffer
+      );
+
+      const pdfText = data.text;
+
+      // AI PROMPT
 
       const prompt = `
-You are an AI study assistant.
+Summarize this PDF in simple notes.
 
-From the following PDF text:
+Also create:
+1. Important flashcards
+2. 10 quiz questions
 
-${text}
-
-Generate:
-
-1. Short summary
-2. 5 flashcards
-3. 10 quiz questions with answers
+PDF Content:
+${pdfText}
 `;
 
+      // GEMINI API
+
       const response = await axios.post(
-  `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.AIzaSyC9ZrJz3xxqZSfrJQvNS1zEEdi8gNGIHa8}`,
-  {
-    contents: [
-      {
-        parts: [
-          {
-            text: prompt,
+
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+
+        {
+          contents: [
+            {
+              parts: [
+                {
+                  text: prompt,
+                },
+              ],
+            },
+          ],
+        },
+
+        {
+          headers: {
+            "Content-Type":
+              "application/json",
           },
-        ],
-      },
-    ],
-  }
-);
+        }
+      );
 
-      const aiText =
-        response.data.candidates[0].content.parts[0].text;
+      // SAFE RESPONSE
 
-      fs.unlinkSync(req.file.path);
+      const result =
+        response?.data?.candidates?.[0]
+          ?.content?.parts?.[0]?.text
+        || "No AI response generated.";
 
       res.json({
-        result: aiText,
+        result,
       });
 
-   } catch (err) {
+    } catch (err) {
 
-  console.log("FULL AI ERROR:");
-  console.log(err.response?.data || err);
+      console.log("AI ERROR:");
+      console.log(
+        err.response?.data || err.message
+      );
 
-  res.status(500).json({
-    error: "AI processing failed",
-  });
-}
+      res.status(500).json({
+        error: "AI generation failed",
+      });
+    }
   }
 );
 
