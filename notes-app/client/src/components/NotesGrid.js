@@ -11,17 +11,23 @@ export default function NotesGrid() {
 
   const [activeFolder, setActiveFolder] =
     useState("All");
-    const [search, setSearch] =
-  useState("");
-const [notes, setNotes] = useState(() => {
 
-  const savedNotes = localStorage.getItem("notes");
+  const [search, setSearch] =
+    useState("");
 
-  return savedNotes
-    ? JSON.parse(savedNotes)
-    : [];
+  // LOCAL STORAGE NOTES
 
-});
+  const [notes, setNotes] = useState(() => {
+
+    const savedNotes =
+      localStorage.getItem("notes");
+
+    return savedNotes
+      ? JSON.parse(savedNotes)
+      : [];
+
+  });
+
   // FOLDERS
 
   const folders = [
@@ -34,26 +40,27 @@ const [notes, setNotes] = useState(() => {
 
   const filteredNotes = notes.filter((note) => {
 
-  const matchesFolder =
-    activeFolder === "All"
-      ? true
-      : note.folder === activeFolder;
+    const matchesFolder =
+      activeFolder === "All"
+        ? true
+        : note.folder === activeFolder;
 
-  const matchesSearch =
-    note.title
-      .toLowerCase()
-      .includes(search.toLowerCase()) ||
+    const matchesSearch =
+      note.title
+        .toLowerCase()
+        .includes(search.toLowerCase()) ||
 
-    note.content
-      .toLowerCase()
-      .includes(search.toLowerCase()) ||
+      note.content
+        .toLowerCase()
+        .includes(search.toLowerCase()) ||
 
-    note.tags.join(" ")
-      .toLowerCase()
-      .includes(search.toLowerCase());
+      note.tags
+        .join(" ")
+        .toLowerCase()
+        .includes(search.toLowerCase());
 
-  return matchesFolder && matchesSearch;
-});
+    return matchesFolder && matchesSearch;
+  });
 
   // ADD NOTE
 
@@ -64,10 +71,20 @@ const [notes, setNotes] = useState(() => {
       id: Date.now(),
     };
 
-    setNotes([noteWithId, ...notes]);
+    const updatedNotes = [
+      noteWithId,
+      ...notes,
+    ];
+
+    setNotes(updatedNotes);
+
+    localStorage.setItem(
+      "notes",
+      JSON.stringify(updatedNotes)
+    );
   };
 
-  // TOGGLE FAVORITE
+  // FAVORITE
 
   const toggleFavorite = (id) => {
 
@@ -81,9 +98,15 @@ const [notes, setNotes] = useState(() => {
     );
 
     setNotes(updatedNotes);
+
+    localStorage.setItem(
+      "notes",
+      JSON.stringify(updatedNotes)
+    );
   };
 
   return (
+
     <div className="max-w-7xl mx-auto p-8">
 
       {/* HEADER */}
@@ -93,46 +116,49 @@ const [notes, setNotes] = useState(() => {
         <h1 className="text-4xl font-bold text-[#3d2b25]">
           My Notes
         </h1>
+
         <input
-  type="text"
-  placeholder="Search notes..."
-  value={search}
-  onChange={(e) => setSearch(e.target.value)}
-  className="
-  w-[300px]
-  px-5
-  py-3
-  rounded-2xl
-  bg-white/30
-  bg-[#1e293b]
-  outline-none
-  border border-white/10
-"
-/>
+          type="text"
+          placeholder="Search notes..."
+          value={search}
+          onChange={(e) =>
+            setSearch(e.target.value)
+          }
+          className="
+            w-[300px]
+            px-5
+            py-3
+            rounded-2xl
+            bg-white/30
+            bg-[#1e293b]
+            outline-none
+            border border-white/10
+          "
+        />
 
         <button
           onClick={() => setShowModal(true)}
           className="
-          px-6
-          py-3
-          rounded-2xl
-          bg-[#9d5c4d]
-          text-white
-          font-semibold
-          hover:scale-105
-          transition
-        "
+            px-6
+            py-3
+            rounded-2xl
+            bg-[#9d5c4d]
+            text-white
+            font-semibold
+            hover:scale-105
+            transition
+          "
         >
           + New Note
         </button>
 
       </div>
 
-      {/* MAIN LAYOUT */}
+      {/* MAIN */}
 
       <div className="flex gap-6">
 
-        {/* LEFT SIDEBAR */}
+        {/* SIDEBAR */}
 
         <FoldersPanel
           folders={folders}
@@ -140,31 +166,51 @@ const [notes, setNotes] = useState(() => {
           setActiveFolder={setActiveFolder}
         />
 
-        {/* NOTES GRID */}
+        {/* NOTES */}
 
         <div className="flex-1">
 
-          <div
-            className="
-            grid
-            grid-cols-1
-            md:grid-cols-2
-            xl:grid-cols-3
-            gap-6
-          "
-          >
+          {filteredNotes.length === 0 ? (
 
-            {filteredNotes.map((note) => (
+            <div
+              className="
+                h-[400px]
+                flex
+                items-center
+                justify-center
+                text-2xl
+                font-semibold
+                opacity-50
+              "
+            >
+              No notes yet ✨
+            </div>
 
-              <NoteCard
-                key={note.id}
-                note={note}
-                toggleFavorite={toggleFavorite}
-              />
+          ) : (
 
-            ))}
+            <div
+              className="
+                grid
+                grid-cols-1
+                md:grid-cols-2
+                xl:grid-cols-3
+                gap-6
+              "
+            >
 
-          </div>
+              {filteredNotes.map((note) => (
+
+                <NoteCard
+                  key={note.id}
+                  note={note}
+                  toggleFavorite={toggleFavorite}
+                />
+
+              ))}
+
+            </div>
+
+          )}
 
         </div>
 

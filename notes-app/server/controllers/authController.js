@@ -210,7 +210,7 @@ exports.getMe = async (req, res) => {
   try {
 
     const user = await User.findById(
-      req.user.id
+      req.user.id || req.user._id || req.user
     ).select("-password");
 
     res.json(user);
@@ -234,7 +234,7 @@ exports.updateProfile = async (req, res) => {
   try {
 
     const user = await User.findById(
-      req.user.id
+      req.user.id || req.user._id || req.user
     );
 
     if (!user) {
