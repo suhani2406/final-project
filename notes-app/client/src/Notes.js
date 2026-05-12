@@ -13,7 +13,15 @@ import {
 } from "@mui/material";
 
 const Notes = () => {
-  const [notes, setNotes] = useState([]);
+const [notes, setNotes] = useState(() => {
+
+  const savedNotes = localStorage.getItem("notes");
+
+  return savedNotes
+    ? JSON.parse(savedNotes)
+    : [];
+
+});;
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 

@@ -13,39 +13,15 @@ export default function NotesGrid() {
     useState("All");
     const [search, setSearch] =
   useState("");
+const [notes, setNotes] = useState(() => {
 
-  const [notes, setNotes] = useState([
-    {
-      id: 1,
-      title: "AI Notes",
-      content:
-        "Build AI flashcard generator using Gemini API.",
-      favorite: true,
-      folder: "Study",
-      tags: ["AI", "Study"],
-    },
+  const savedNotes = localStorage.getItem("notes");
 
-    {
-      id: 2,
-      title: "UI Ideas",
-      content:
-        "Add floating glassmorphism cards and focus mode.",
-      favorite: false,
-      folder: "Work",
-      tags: ["Design"],
-    },
+  return savedNotes
+    ? JSON.parse(savedNotes)
+    : [];
 
-    {
-      id: 3,
-      title: "Daily Journal",
-      content:
-        "Stay consistent and trust the process.",
-      favorite: false,
-      folder: "Personal",
-      tags: ["Journal"],
-    },
-  ]);
-
+});
   // FOLDERS
 
   const folders = [

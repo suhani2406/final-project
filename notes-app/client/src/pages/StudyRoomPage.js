@@ -39,9 +39,17 @@ export default function StudyRoomPage() {
     }
   };
 
-  useEffect(() => {
+ useEffect(() => {
+
+  fetchRooms();
+
+  const interval = setInterval(() => {
     fetchRooms();
-  }, []);
+  }, 3000);
+
+  return () => clearInterval(interval);
+
+}, []);
 
   // CREATE ROOM
  const createRoom = async () => {
