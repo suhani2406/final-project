@@ -10,6 +10,7 @@ A full-stack productivity platform inspired by Notion, built to manage notes, fo
 
 ## 🚀 Live Demo
 > Deployed Application: https://final-project-3-qemw.onrender.com/
+> https://final-project-gwjg-kr16il4kk-suhani2406s-projects.vercel.app/
 
 ---
 
@@ -18,7 +19,7 @@ A full-stack productivity platform inspired by Notion, built to manage notes, fo
 This project is a productivity management system designed to help users organize their thoughts, tasks, and notes in a structured way using a modular folder-based system.
 
 It focuses more on **functionality, scalability, and backend architecture** rather than final UI polish (which is still under development).
-
+https://final-project-gwjg-kr16il4kk-suhani2406s-projects.vercel.app/
 ---
 
 ## ⚙️ Tech Stack
