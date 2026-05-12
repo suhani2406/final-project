@@ -6,7 +6,7 @@ export default function AIPdfTool() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState("");
 
-  const BACKEND_URL = "http://localhost:5000";
+  const BACKEND_URL = "https://final-project-3-qemw.onrender.com";
 
   const generateFromText = async () => {
     if (!text.trim()) {
