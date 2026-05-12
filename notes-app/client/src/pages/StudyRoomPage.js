@@ -167,33 +167,27 @@ export default function StudyRoomPage() {
 
   // SEND MESSAGE
   const sendMessage = async (roomId) => {
+  if (!message.trim()) return;
 
-    if (!message.trim()) return;
+  try {
+    const res = await API.post(
+      `/study-rooms/${roomId}/messages`,
+      { text: message },
+      getAuthConfig()
+    );
 
-    try {
+    setRooms((prevRooms) =>
+      prevRooms.map((room) =>
+        room._id === roomId ? res.data : room
+      )
+    );
 
-      await API.post(
-        `/study-rooms/${roomId}/messages`,
-        {
-          text: message,
-        },
-        getAuthConfig()
-      );
-
-      setMessage("");
-
-      fetchRooms();
-
-    } catch (err) {
-
-      console.log(
-        "MESSAGE ERROR:",
-        err.response?.data || err
-      );
-
-      alert("Message failed");
-    }
-  };
+    setMessage("");
+  } catch (err) {
+    console.log("MESSAGE ERROR:", err.response?.data || err);
+    alert(err.response?.data?.msg || "Message failed");
+  }
+};
 
   return (
 

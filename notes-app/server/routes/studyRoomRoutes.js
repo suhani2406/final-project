@@ -137,6 +137,8 @@ router.post("/:id/messages", authMiddleware, async (req, res) => {
   try {
     const { text } = req.body;
 
+    const userId = req.user.id || req.user._id || req.user;
+
     const room = await StudyRoom.findById(req.params.id);
 
     if (!room) {
@@ -144,15 +146,20 @@ router.post("/:id/messages", authMiddleware, async (req, res) => {
     }
 
     room.messages.push({
-      user: req.user.id || req.user._id || req.user,
+      user: userId,
       text,
     });
 
     await room.save();
 
-    res.json({ msg: "Message sent" });
+    const updatedRoom = await StudyRoom.findById(room._id)
+      .populate("members", "name email avatar role")
+      .populate("createdBy", "name avatar")
+      .populate("messages.user", "name avatar");
+
+    res.json(updatedRoom);
   } catch (err) {
-    console.log(err);
+    console.log("MESSAGE ERROR:", err);
     res.status(500).json({ msg: "Message failed" });
   }
 });
