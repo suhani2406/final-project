@@ -1,0 +1,219 @@
+// import { useState } from "react";
+
+// export default function AIPdfTool() {
+//   const [selectedFile, setSelectedFile] = useState(null);
+//   const [fileName, setFileName] = useState("");
+//   const [loadingType, setLoadingType] = useState("");
+//   const [result, setResult] = useState("");
+
+//   const BACKEND_URL = "http://localhost:5000";
+
+//   const routes = {
+//     summary: "summarize",
+//     flashcards: "flashcards",
+//     quiz: "quiz",
+//   };
+
+//   const handleFile = (e) => {
+//     const file = e.target.files[0];
+
+//     if (file) {
+//       setSelectedFile(file);
+//       setFileName(file.name);
+//       setResult("");
+//     }
+//   };
+
+//   const generateAI = async (type) => {
+//     if (!selectedFile) {
+//       alert("Please upload PDF first");
+//       return;
+//     }
+
+//     try {
+//       setLoadingType(type);
+
+//       const formData = new FormData();
+//       formData.append("pdf", selectedFile);
+
+//       const endpoint = routes[type];
+
+//       const res = await fetch(
+//         `${BACKEND_URL}/api/study-ai/${endpoint}`,
+//         {
+//           method: "POST",
+//           body: formData,
+//         }
+//       );
+
+//       const data = await res.json();
+
+//       if (!res.ok) {
+//         throw new Error(data.message);
+//       }
+
+//       setResult(data.result);
+//     } catch (err) {
+//       console.log(err);
+//       alert("AI generation failed");
+//     } finally {
+//       setLoadingType("");
+//     }
+//   };
+
+//   return (
+//     <div className="glass-card p-8 max-w-5xl mx-auto">
+//       <h1 className="text-4xl font-black mb-3">
+//         AI Study Assistant ✨
+//       </h1>
+
+//       <label className="w-full p-10 rounded-3xl bg-white/60 flex flex-col items-center justify-center cursor-pointer">
+//         <div className="text-6xl mb-4">📄</div>
+
+//         <h2 className="text-2xl font-black">
+//           Upload PDF
+//         </h2>
+
+//         <input
+//           type="file"
+//           hidden
+//           accept=".pdf"
+//           onChange={handleFile}
+//         />
+//       </label>
+
+//       {fileName && (
+//         <div className="mt-5 bg-white/60 rounded-2xl p-4">
+//           {fileName}
+//         </div>
+//       )}
+
+//       <div className="grid md:grid-cols-3 gap-5 mt-8">
+//         <button
+//           onClick={() => generateAI("summary")}
+//           className="main-btn"
+//         >
+//           {
+//             loadingType === "summary"
+//               ? "Generating..."
+//               : "📄 Summary"
+//           }
+//         </button>
+
+//         <button
+//           onClick={() => generateAI("flashcards")}
+//           className="secondary-btn"
+//         >
+//           {
+//             loadingType === "flashcards"
+//               ? "Generating..."
+//               : "🧠 Flashcards"
+//           }
+//         </button>
+
+//         <button
+//           onClick={() => generateAI("quiz")}
+//           className="secondary-btn"
+//         >
+//           {
+//             loadingType === "quiz"
+//               ? "Generating..."
+//               : "❓ Quiz"
+//           }
+//         </button>
+//       </div>
+
+//       {result && (
+//         <div className="mt-8 bg-white/70 rounded-3xl p-6 whitespace-pre-wrap max-h-[600px] overflow-y-auto">
+//           {result}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+import { useState } from "react";
+
+export default function AIPdfTool() {
+  const [text, setText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState("");
+
+  const BACKEND_URL = "http://localhost:5000";
+
+  const generateFromText = async () => {
+    if (!text.trim()) {
+      alert("Paste some study text first");
+      return;
+
+    }
+      if (text.length > 12000) {
+  alert("Text too large. Please paste smaller notes.");
+  return;
+
+    }
+
+    try {
+      setLoading(true);
+      setResult("");
+
+      const res = await fetch(`${BACKEND_URL}/api/study-ai/text-summary`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "AI failed");
+      }
+
+      setResult(data.result);
+    } catch (err) {
+      console.log("AI ERROR:", err);
+      alert("AI generation failed. Check backend terminal.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="glass-card p-8 max-w-5xl mx-auto">
+      <h1 className="text-4xl font-black mb-3">AI Study Assistant ✨</h1>
+
+      <p className="opacity-70 mb-6">
+        Paste text from your PDF/notes and generate summary, flashcards, quiz
+        questions, and weak areas.
+      </p>
+
+      <textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Paste your PDF text or notes here..."
+        className="w-full min-h-[240px] rounded-3xl bg-white/70 p-5 outline-none leading-7"
+      />
+
+      <div className="grid md:grid-cols-3 gap-5 mt-6">
+        <button onClick={generateFromText} className="main-btn">
+          {loading ? "Generating..." : "📄 Generate Summary"}
+        </button>
+
+        <button onClick={generateFromText} className="secondary-btn">
+          {loading ? "Generating..." : "🧠 Create Flashcards"}
+        </button>
+
+        <button onClick={generateFromText} className="secondary-btn">
+          {loading ? "Generating..." : "❓ Generate Quiz"}
+        </button>
+      </div>
+
+      {result && (
+        <div className="mt-8 bg-white/70 rounded-3xl p-6 whitespace-pre-wrap max-h-[600px] overflow-y-auto leading-7">
+          {result}
+        </div>
+      )}
+    </div>
+  );
+}

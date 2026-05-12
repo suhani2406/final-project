@@ -19,8 +19,8 @@ const Notes = () => {
 
   const fetchNotes = async () => {
     try {
-      const res = await API.get("/notes");
-      setNotes(res.data);
+      // const res = await API.get("/notes");
+      // setNotes(res.data);
     } catch (err) {
       console.log(err);
     }
@@ -49,9 +49,9 @@ const Notes = () => {
     }
   };
 
-  useEffect(() => {
-    fetchNotes();
-  }, []);
+  // useEffect(() => {
+  //   fetchNotes();
+  // }, []);
 
   return (
     <Container maxWidth="md">

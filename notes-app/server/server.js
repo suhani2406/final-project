@@ -5,68 +5,79 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const http = require("http");
+const { Server } = require("socket.io");
 
-const authRoutes = require("./routes/authRoutes");
-const noteRoutes = require("./routes/noteRoutes");
-const aiRoutes = require("./routes/aiRoutes");
-
-const authMiddleware = require("./middleware/authMiddleware");
 
 const app = express();
 
+const server = http.createServer(app);
 
-// CORS
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+  },
+});
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:3000",
-      "https://final-project-weld-theta.vercel.app"
-    ],
-    credentials: true,
-  })
-);
-
+// ROUTES
+const authRoutes = require("./routes/authRoutes");
+const noteRoutes = require("./routes/noteRoutes");
+const studyAiRoutes = require("./routes/studyAiRoutes");
+const studyRoomRoutes = require("./routes/studyRoomRoutes");
 
 // MIDDLEWARE
+app.use(cors());
 
 app.use(express.json());
 
-
 // TEST ROUTE
-
 app.get("/ping", (req, res) => {
   res.send("pong");
 });
 
-
-// ROUTES
-
+// API ROUTES
 app.use("/api/auth", authRoutes);
 
 app.use("/api/notes", noteRoutes);
 
-app.use("/api/ai", aiRoutes);
+app.use("/api/study-ai", studyAiRoutes);
 
+app.use("/api/study-rooms", studyRoomRoutes);
 
-// PROTECTED TEST
+// SOCKET.IO
+io.on("connection", (socket) => {
 
-app.get(
-  "/api/protected",
-  authMiddleware,
-  (req, res) => {
+  console.log("User connected:", socket.id);
 
-    res.json({
-      msg: "Protected route working",
-      user: req.user,
-    });
-  }
-);
+  socket.on("join-room", (roomId) => {
 
+    socket.join(roomId);
 
-// DB
+    console.log(`Joined room ${roomId}`);
 
-mongoose.connect(process.env.MONGO_URI)
+  });
+
+  socket.on("send-message", ({ roomId, message }) => {
+
+    io.to(roomId).emit(
+      "receive-message",
+      message
+    );
+
+  });
+
+  socket.on("disconnect", () => {
+
+    console.log("User disconnected");
+
+  });
+
+});
+
+// DATABASE
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("DB connected ✅");
   })
@@ -74,11 +85,11 @@ mongoose.connect(process.env.MONGO_URI)
     console.log(err);
   });
 
+const PORT = process.env.PORT || 5000;
 
-// PORT
-
-const PORT = process.env.PORT || 5001;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// SERVER
+server.listen(PORT, () => {
+  console.log(
+    `Server running on port ${PORT}`
+  );
 });

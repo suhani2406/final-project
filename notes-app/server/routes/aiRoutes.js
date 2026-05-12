@@ -1,75 +1,56 @@
 const express = require("express");
 const router = express.Router();
-
 const multer = require("multer");
 const pdfParse = require("pdf-parse");
 const axios = require("axios");
 
-const upload = multer();
+const upload = multer({ storage: multer.memoryStorage() });
+
+async function extractText(file) {
+  const data = await pdfParse(file.buffer);
+  return data.text.slice(0, 30000);
+}
+
+async function askGemini(prompt) {
+  const res = await axios.post(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+    { contents: [{ parts: [{ text: prompt }] }] }
+  );
+
+  return res.data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response";
+}
 
 router.post("/summarize", upload.single("pdf"), async (req, res) => {
   try {
-    // ✅ 1. CHECK FILE
-    if (!req.file) {
-      return res.status(400).json({
-        error: "No PDF uploaded",
-      });
-    }
-
-    // ✅ 2. PARSE PDF
-    const data = await pdfParse(req.file.buffer);
-
-    // ✅ 3. LIMIT TEXT (VERY IMPORTANT)
-    const pdfText = data.text.slice(0, 12000);
-
-    // ✅ 4. PROMPT
-    const prompt = `
-Summarize this PDF in simple notes.
-
-Also create:
-1. Important flashcards
-2. 10 quiz questions
-
-PDF Content:
-${pdfText}
-`;
-
-    // ✅ 5. CALL GEMINI (FIXED KEY USAGE)
-    const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        contents: [
-          {
-            parts: [{ text: prompt }],
-          },
-        ],
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    // ✅ 6. SAFE RESPONSE
-    const result =
-      response?.data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "No AI response generated.";
-
+    const text = await extractText(req.file);
+    const result = await askGemini(`Summarize this PDF:\n\n${text}`);
     res.json({ result });
-
   } catch (err) {
-  console.log("FULL ERROR:");
-  console.log(err); // 🔥 THIS IS KEY
-
-  if (err.response) {
-    console.log("RESPONSE DATA:", err.response.data);
+    console.log("AI SUMMARY ERROR:", err.response?.data || err.message);
+    res.status(500).json({ message: "Summary failed" });
   }
+});
 
-  res.status(500).json({
-    error: "AI generation failed",
-  });
-}
+router.post("/flashcards", upload.single("pdf"), async (req, res) => {
+  try {
+    const text = await extractText(req.file);
+    const result = await askGemini(`Create 20 flashcards from this PDF:\n\n${text}`);
+    res.json({ result });
+  } catch (err) {
+    console.log("AI FLASHCARD ERROR:", err.response?.data || err.message);
+    res.status(500).json({ message: "Flashcards failed" });
+  }
+});
+
+router.post("/quiz", upload.single("pdf"), async (req, res) => {
+  try {
+    const text = await extractText(req.file);
+    const result = await askGemini(`Create 20 MCQ quiz questions with answers and weak areas from this PDF:\n\n${text}`);
+    res.json({ result });
+  } catch (err) {
+    console.log("AI QUIZ ERROR:", err.response?.data || err.message);
+    res.status(500).json({ message: "Quiz failed" });
+  }
 });
 
 module.exports = router;
