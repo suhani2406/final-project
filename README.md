@@ -1,4 +1,8 @@
 # Full Stack Productivity System (Notion-like)
+<img width="632" height="319" alt="image" src="https://github.com/user-attachments/assets/52c9c8a5-a08a-43ab-a8b1-c352b920a183" />
+<img width="628" height="327" alt="image" src="https://github.com/user-attachments/assets/af255b26-0ee9-49b7-b630-0209a25f9785" />
+
+
 
 A full-stack productivity platform inspired by Notion, built to manage notes, folders, and structured content efficiently. The system is currently **fully functional with working frontend + backend + deployment**, while UI polishing and layout refinements are still in progress.
 
