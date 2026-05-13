@@ -73,12 +73,12 @@ const addQuickNote = () => {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="glass-card p-6">
-                    <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center">
   <h2 className="section-title">Today’s Goals</h2>
 
-  <button onClick={addQuickNote} className="small-btn">
-  + New
-</button>
+  <button onClick={addGoal} className="small-btn">
+    + Add
+  </button>
 </div>
 
                   <div className="space-y-4 mt-5 text-sm">
