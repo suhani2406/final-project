@@ -20,22 +20,30 @@ export default function Dashboard() {
   const user = JSON.parse(localStorage.getItem("user")) || {};
   const userId = user.id || "guest";
 
-  const [goals] = useState(
-    JSON.parse(localStorage.getItem(`goals_${userId}`)) || [
-      "Finish Dashboard UI",
-      "Study for AI Exam",
-      "Read 20 pages",
-      "Practice 20 MCQs",
-    ]
-  );
+const [goals, setGoals] = useState(
+  JSON.parse(localStorage.getItem(`goals_${userId}`)) || []
+);
 
-  const [quickNotes] = useState(
-    JSON.parse(localStorage.getItem(`quickNotes_${userId}`)) || [
-      "React Project Ideas",
-      "AI Flashcards Plan",
-      "Podcast Episode Ideas",
-    ]
-  );
+const [quickNotes, setQuickNotes] = useState(
+  JSON.parse(localStorage.getItem(`quickNotes_${userId}`)) || []
+);
+  const addGoal = () => {
+  const value = prompt("Enter new goal");
+  if (!value) return;
+
+  const updated = [...goals, value];
+  setGoals(updated);
+  localStorage.setItem(`goals_${userId}`, JSON.stringify(updated));
+};
+
+const addQuickNote = () => {
+  const value = prompt("Enter quick note");
+  if (!value) return;
+
+  const updated = [...quickNotes, value];
+  setQuickNotes(updated);
+  localStorage.setItem(`quickNotes_${userId}`, JSON.stringify(updated));
+};
 
   return (
     <div
@@ -65,29 +73,77 @@ export default function Dashboard() {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="glass-card p-6">
-                    <h2 className="section-title">Today’s Goals</h2>
-
-                    <div className="space-y-4 mt-5 text-sm">
-                      {goals.map((goal, index) => (
-                        <p key={index}>
-                          {index < goals.length - 1 ? "✅" : "⬜"} {goal}
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="glass-card p-6">
                     <div className="flex justify-between items-center">
-                      <h2 className="section-title">Quick Notes</h2>
-                      <button className="small-btn">+ New</button>
-                    </div>
+  <h2 className="section-title">Today’s Goals</h2>
 
+  <button onClick={addQuickNote} className="small-btn">
+  + New
+</button>
+</div>
+
+                  <div className="space-y-4 mt-5 text-sm">
+
+  {goals.map((goal, index) => (
+
+    <div
+      key={index}
+      className="flex justify-between items-center"
+    >
+
+      <p>✅ {goal}</p>
+
+      <button
+        onClick={() => {
+
+          const updated = goals.filter(
+            (_, i) => i !== index
+          );
+
+          setGoals(updated);
+
+          localStorage.setItem(
+            `goals_${userId}`,
+            JSON.stringify(updated)
+          );
+
+        }}
+        className="text-red-500"
+      >
+        ✕
+      </button>
+
+    </div>
+
+  ))}
+
+</div>
                     <div className="space-y-4 mt-5 text-sm">
-                      {quickNotes.map((note, index) => (
-                        <p key={index}>
-                          {index === 2 ? "🟠" : "🟣"} {note}
-                        </p>
-                      ))}
+                     {quickNotes.map((note, index) => (
+  <div
+    key={index}
+    className="flex justify-between items-center"
+  >
+    <p>🟣 {note}</p>
+
+    <button
+      onClick={() => {
+        const updated = quickNotes.filter(
+          (_, i) => i !== index
+        );
+
+        setQuickNotes(updated);
+
+        localStorage.setItem(
+          `quickNotes_${userId}`,
+          JSON.stringify(updated)
+        );
+      }}
+      className="text-red-500"
+    >
+      ✕
+    </button>
+  </div>
+))}
                     </div>
                   </div>
                 </div>

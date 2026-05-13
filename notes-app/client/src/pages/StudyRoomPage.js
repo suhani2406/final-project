@@ -104,67 +104,64 @@ export default function StudyRoomPage() {
 
   // JOIN ROOM
   const joinRoom = async (id) => {
-    try {
+  try {
+    const res = await API.post(
+      `/study-rooms/${id}/join`,
+      {},
+      getAuthConfig()
+    );
 
-      await API.post(
-        `/study-rooms/${id}/join`,
-        {},
-        getAuthConfig()
-      );
+    setRooms((prev) =>
+      prev.map((room) =>
+        room._id === id ? res.data : room
+      )
+    );
 
-      fetchRooms();
-
-      alert("Joined room");
-
-    } catch (err) {
-
-      console.log(
-        "JOIN ROOM ERROR:",
-        err.response?.data || err
-      );
-
-      alert("Join failed");
-    }
-  };
+    alert("Joined room");
+  } catch (err) {
+    console.log("JOIN ROOM ERROR:", err.response?.data || err);
+    alert(err.response?.data?.msg || "Join failed");
+  }
+};
 
   // JOIN BY CODE
   const joinByCode = async () => {
+  if (!roomCode.trim()) {
+    alert("Enter room code");
+    return;
+  }
 
-    if (!roomCode) {
-      alert("Enter room code");
-      return;
-    }
+  try {
+    const res = await API.post(
+      "/study-rooms/join/code",
+      {
+        roomCode: roomCode.trim(),
+      },
+      getAuthConfig()
+    );
 
-    try {
-
-      await API.post(
-        "/study-rooms/join/code",
-        {
-          roomCode,
-        },
-        getAuthConfig()
+    setRooms((prev) => {
+      const exists = prev.some(
+        (room) => room._id === res.data._id
       );
 
-      setRoomCode("");
+      if (exists) {
+        return prev.map((room) =>
+          room._id === res.data._id ? res.data : room
+        );
+      }
 
-      fetchRooms();
+      return [res.data, ...prev];
+    });
 
-      alert("Joined successfully");
+    setRoomCode("");
 
-    } catch (err) {
-
-      console.log(
-        "JOIN CODE ERROR:",
-        err.response?.data || err
-      );
-
-      alert(
-        err.response?.data?.msg ||
-        "Invalid room code"
-      );
-    }
-  };
-
+    alert("Joined successfully");
+  } catch (err) {
+    console.log("JOIN CODE ERROR:", err.response?.data || err);
+    alert(err.response?.data?.msg || "Invalid room code");
+  }
+};
   // SEND MESSAGE
   const sendMessage = async (roomId) => {
   if (!message.trim()) return;
@@ -172,12 +169,14 @@ export default function StudyRoomPage() {
   try {
     const res = await API.post(
       `/study-rooms/${roomId}/messages`,
-      { text: message },
+      {
+        text: message.trim(),
+      },
       getAuthConfig()
     );
 
-    setRooms((prevRooms) =>
-      prevRooms.map((room) =>
+    setRooms((prev) =>
+      prev.map((room) =>
         room._id === roomId ? res.data : room
       )
     );
@@ -188,7 +187,6 @@ export default function StudyRoomPage() {
     alert(err.response?.data?.msg || "Message failed");
   }
 };
-
   return (
 
     <div className="space-y-6">
