@@ -20,21 +20,21 @@ export default function Dashboard() {
   const user = JSON.parse(localStorage.getItem("user")) || {};
   const userId = user.id || "guest";
 
-const [goals, setGoals] = useState(
+const [goals] = useState(
   JSON.parse(localStorage.getItem(`goals_${userId}`)) || []
 );
 
 const [quickNotes, setQuickNotes] = useState(
   JSON.parse(localStorage.getItem(`quickNotes_${userId}`)) || []
 );
-  const addGoal = () => {
-  const value = prompt("Enter new goal");
-  if (!value) return;
+//   const addGoal = () => {
+//   const value = prompt("Enter new goal");
+//   if (!value) return;
 
-  const updated = [...goals, value];
-  setGoals(updated);
-  localStorage.setItem(`goals_${userId}`, JSON.stringify(updated));
-};
+//   const updated = [...goals, value];
+//   setGoals(updated);
+//   localStorage.setItem(`goals_${userId}`, JSON.stringify(updated));
+// };
 
 const addQuickNote = () => {
   const value = prompt("Enter quick note");
@@ -76,10 +76,12 @@ const addQuickNote = () => {
                 <div className="flex justify-between items-center">
   <h2 className="section-title">Today’s Goals</h2>
 
-  <button onClick={addGoal} className="small-btn">
-    + Add
-  </button>
-</div>
+ <button
+  onClick={addQuickNote}
+  className="small-btn"
+>
+  + New
+</button>
 
                   <div className="space-y-4 mt-5 text-sm">
 
