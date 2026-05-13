@@ -38,7 +38,8 @@ export default function StudyRoomPage() {
 
     }
   };
-  useEffect(() => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+useEffect(() => {
   fetchRooms();
 
   const interval = setInterval(() => {
