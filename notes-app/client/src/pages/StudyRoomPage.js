@@ -38,10 +38,7 @@ export default function StudyRoomPage() {
 
     }
   };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-
- useEffect(() => {
-
+  useEffect(() => {
   fetchRooms();
 
   const interval = setInterval(() => {
@@ -50,6 +47,7 @@ export default function StudyRoomPage() {
 
   return () => clearInterval(interval);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
 
   // CREATE ROOM
