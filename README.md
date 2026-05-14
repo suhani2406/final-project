@@ -1,6 +1,7 @@
 # Full Stack Productivity System (Notion-like)
-<img width="632" height="319" alt="image" src="https://github.com/user-attachments/assets/52c9c8a5-a08a-43ab-a8b1-c352b920a183" />
-<img width="628" height="327" alt="image" src="https://github.com/user-attachments/assets/af255b26-0ee9-49b7-b630-0209a25f9785" />
+<img width="632" height="319" alt="image" src="https://github.com/user-attachments/assets/52c9c8a5-a08a-43ab-a8b1-c352b920a183" /> <img width="628" height="327" alt="image" src="https://github.com/user-attachments/assets/af255b26-0ee9-49b7-b630-0209a25f9785" /> <img width="338" height="320" alt="image" src="https://github.com/user-attachments/assets/742b65d6-d2c4-4c54-a303-9562e0dcfcc8" /> <img width="538" height="338" alt="image" src="https://github.com/user-attachments/assets/cbcf7666-a1b1-4639-a98d-65cd1824b0c5" />
+
+
 
 
 
