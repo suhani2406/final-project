@@ -36,11 +36,9 @@ const Login = () => {
     navigate("/notes");
 
   } catch (err) {
-
-    console.log(err);
-
-    alert("Login failed");
-  }
+  console.log("LOGIN ERROR:", err.response?.data || err);
+  alert(err.response?.data?.msg || "Login failed");
+}
 };
 
   return (

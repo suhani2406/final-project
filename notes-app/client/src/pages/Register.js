@@ -21,10 +21,10 @@ const Register = () => {
     alert("Account created successfully");
     navigate("/");
 
-  } catch (err) {
-    console.log(err.response?.data || err);
-    alert(err.response?.data?.msg || "Registration failed");
-  }
+  }catch (err) {
+  console.log("REGISTER ERROR:", err.response?.data || err);
+  alert(err.response?.data?.msg || "Registration failed");
+}
 };
 
   return (
