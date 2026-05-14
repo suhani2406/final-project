@@ -9,16 +9,14 @@ export default function ProfilePage() {
     "https://wallpaperbat.com/img/1511198-pretty-anime-girl-pink-wallpaper-girl-wallpaper-iphone.jpg",
   ];
 
-  const [user, setUser] = useState(null);
+  const fallbackAvatar =
+    "https://api.dicebear.com/7.x/adventurer/svg?seed=YumeNote";
+
+  const [user, setUser] = useState({});
 
   useEffect(() => {
-    const savedUser = JSON.parse(
-      localStorage.getItem("user")
-    );
-
-    if (savedUser) {
-      setUser(savedUser);
-    }
+    const savedUser = JSON.parse(localStorage.getItem("user")) || {};
+    setUser(savedUser);
   }, []);
 
   const chooseAvatar = (avatar) => {
@@ -28,92 +26,56 @@ export default function ProfilePage() {
     };
 
     setUser(updatedUser);
-
-    localStorage.setItem(
-      "user",
-      JSON.stringify(updatedUser)
-    );
+    localStorage.setItem("user", JSON.stringify(updatedUser));
   };
 
-  if (!user) {
-    return (
-      <div className="glass-card p-6 text-center">
-        Loading...
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-5xl mx-auto p-4">
+    <div className="glass-card p-8 max-w-5xl mx-auto">
+      <h1 className="text-4xl font-black mb-8">Profile ✨</h1>
 
-      <div className="glass-card rounded-[35px] p-6 md:p-8 overflow-hidden">
+      <div className="flex items-center gap-6">
+        <img
+          src={user.avatar || fallbackAvatar}
+          onError={(e) => {
+            e.currentTarget.src = fallbackAvatar;
+          }}
+          alt="profile"
+          className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg"
+        />
 
-        <h1 className="text-3xl md:text-4xl font-black mb-8">
-          Profile ✨
-        </h1>
-
-        <div className="flex flex-col md:flex-row items-center gap-6">
-
-          <img
-            src={user.avatar || avatars[0]}
-            alt="profile"
-            className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
-          />
-
-          <div className="text-center md:text-left">
-
-            <h2 className="text-3xl font-black">
-              {user.name}
-            </h2>
-
-            <p className="opacity-70 text-lg">
-              {user.bio || "Student"}
-            </p>
-
-            <p className="opacity-60 text-sm mt-2">
-              {user.email}
-            </p>
-
-          </div>
-        </div>
-
-        <div className="mt-10">
-
-          <h2 className="text-2xl font-black mb-5">
-            Choose Avatar
+        <div>
+          <h2 className="text-3xl font-black">
+            {user.name || "Guest User"}
           </h2>
+          <p className="text-lg opacity-70">
+            {user.role || "Student"}
+          </p>
+          <p className="text-sm opacity-60">
+            {user.email || ""}
+          </p>
+        </div>
+      </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="mt-10">
+        <h2 className="text-2xl font-black mb-5">Choose Avatar</h2>
 
-            {avatars.map((avatar, index) => (
-              <button
-                key={index}
-                onClick={() =>
-                  chooseAvatar(avatar)
-                }
-                className={`
-                overflow-hidden
-                rounded-2xl
-                border-4
-                transition
-                hover:scale-105
-                ${
-                  user.avatar === avatar
-                    ? "border-pink-400"
-                    : "border-white"
-                }
-                `}
-              >
-                <img
-                  src={avatar}
-                  alt={`avatar-${index}`}
-                  className="w-full h-28 object-cover"
-                />
-              </button>
-            ))}
-
-          </div>
-
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
+          {avatars.map((avatar, index) => (
+            <button
+              key={index}
+              onClick={() => chooseAvatar(avatar)}
+              className="rounded-3xl overflow-hidden border-4 border-white hover:scale-105 transition"
+            >
+              <img
+                src={avatar}
+                onError={(e) => {
+                  e.currentTarget.src = fallbackAvatar;
+                }}
+                alt="avatar"
+                className="w-full h-28 object-cover"
+              />
+            </button>
+          ))}
         </div>
       </div>
     </div>

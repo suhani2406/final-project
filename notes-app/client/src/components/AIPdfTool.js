@@ -28,15 +28,20 @@ const generateFromText = async () => {
     });
 
     setResult(res.data.result);
-  } catch (err) {
-    console.log("AI ERROR FULL:", err.response?.data || err);
+  // } catch (err) {
+  //   console.log("AI ERROR FULL:", err.response?.data || err);
 
-    alert(
-      err.response?.data?.error?.error?.message ||
-      err.response?.data?.message ||
-      "AI generation failed"
-    );
-  } finally {
+  //   alert(
+  //     err.response?.data?.error?.error?.message ||
+  //     err.response?.data?.message ||
+  //     "AI generation failed"
+  //   );
+  // } catch (err) {
+  console.log("AI ERROR FULL:", err.response?.data || err);
+
+  alert("AI daily limit reached. Please try again later.");
+}
+  finally {
     setLoading(false);
   }
 };
