@@ -55,9 +55,14 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
+
 router.get("/", authMiddleware, async (req, res) => {
   try {
-    const rooms = await StudyRoom.find()
+    const userId = getUserId(req);
+
+    const rooms = await StudyRoom.find({
+      members: userId,
+    })
       .populate("members", "name email avatar role")
       .populate("createdBy", "name avatar")
       .populate("messages.user", "name avatar")
