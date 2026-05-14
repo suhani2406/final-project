@@ -7,9 +7,9 @@ import MotivationPanel from "../components/MotivationPanel";
 import FocusTimer from "../components/FocusTimer";
 import MusicPlayer from "../components/MusicPlayer";
 import NotesGrid from "../components/NotesGrid";
-
+import StreakCalendar from "../components/StreakCalendar";
 import AIAssistantPage from "./AIAssistantPage";
-import ProgressPage from "./ProgressPage";
+
 import StudyRoomPage from "./StudyRoomPage";
 import ProfilePage from "./ProfilePage";
 
@@ -80,8 +80,8 @@ export default function Dashboard() {
           <Header />
 
           {activePage === "dashboard" && (
-            <div className="grid grid-cols-12 gap-6 mt-6 max-w-[1500px] mx-auto">
-              <section className="col-span-12 xl:col-span-8 space-y-6">
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 md:gap-6 mt-6 max-w-[1500px] mx-auto">
+             <section className="xl:col-span-8 space-y-4 md:space-y-6">
                 <MotivationPanel />
 
                 <div className="grid md:grid-cols-2 gap-6">
@@ -151,7 +151,7 @@ export default function Dashboard() {
                 </div>
               </section>
 
-              <section className="col-span-12 xl:col-span-4 space-y-6">
+             <section className="xl:col-span-4 space-y-4 md:space-y-6">
                 <FocusTimer />
                 <MusicPlayer />
               </section>
@@ -160,7 +160,7 @@ export default function Dashboard() {
 
           {activePage === "notes" && <NotesGrid />}
           {activePage === "ai" && <AIAssistantPage />}
-          {activePage === "progress" && <ProgressPage />}
+          {activePage === "streak" && <StreakCalendar />}
           {activePage === "studyroom" && <StudyRoomPage />}
           {activePage === "profile" && <ProfilePage />}
         </main>
