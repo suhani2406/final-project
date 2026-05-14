@@ -51,7 +51,7 @@ try {
   };
 
   return (
-    <aside className="w-[270px] min-h-screen p-6 bg-white/75 backdrop-blur-xl rounded-r-[32px] flex flex-col justify-between shadow-xl">
+    <aside className="hidden lg:flex w-[270px] min-h-screen p-6 bg-white/75 backdrop-blur-xl rounded-r-[32px] flex-col justify-between shadow-xl">
       <div>
         <h1 className="text-3xl font-black">YumeNote 🌸</h1>
         <p className="text-sm opacity-70 mt-1">Your peaceful workspace</p>
