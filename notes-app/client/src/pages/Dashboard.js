@@ -20,30 +20,43 @@ export default function Dashboard() {
   const user = JSON.parse(localStorage.getItem("user")) || {};
   const userId = user.id || "guest";
 
-const [goals] = useState(
-  JSON.parse(localStorage.getItem(`goals_${userId}`)) || []
-);
+  const [goals, setGoals] = useState(
+    JSON.parse(localStorage.getItem(`goals_${userId}`)) || []
+  );
 
-const [quickNotes, setQuickNotes] = useState(
-  JSON.parse(localStorage.getItem(`quickNotes_${userId}`)) || []
-);
-//   const addGoal = () => {
-//   const value = prompt("Enter new goal");
-//   if (!value) return;
+  const [quickNotes, setQuickNotes] = useState(
+    JSON.parse(localStorage.getItem(`quickNotes_${userId}`)) || []
+  );
 
-//   const updated = [...goals, value];
-//   setGoals(updated);
-//   localStorage.setItem(`goals_${userId}`, JSON.stringify(updated));
-// };
+  const addGoal = () => {
+    const value = prompt("Enter new goal");
+    if (!value) return;
 
-const addQuickNote = () => {
-  const value = prompt("Enter quick note");
-  if (!value) return;
+    const updated = [...goals, value];
+    setGoals(updated);
+    localStorage.setItem(`goals_${userId}`, JSON.stringify(updated));
+  };
 
-  const updated = [...quickNotes, value];
-  setQuickNotes(updated);
-  localStorage.setItem(`quickNotes_${userId}`, JSON.stringify(updated));
-};
+  const addQuickNote = () => {
+    const value = prompt("Enter quick note");
+    if (!value) return;
+
+    const updated = [...quickNotes, value];
+    setQuickNotes(updated);
+    localStorage.setItem(`quickNotes_${userId}`, JSON.stringify(updated));
+  };
+
+  const deleteGoal = (index) => {
+    const updated = goals.filter((_, i) => i !== index);
+    setGoals(updated);
+    localStorage.setItem(`goals_${userId}`, JSON.stringify(updated));
+  };
+
+  const deleteQuickNote = (index) => {
+    const updated = quickNotes.filter((_, i) => i !== index);
+    setQuickNotes(updated);
+    localStorage.setItem(`quickNotes_${userId}`, JSON.stringify(updated));
+  };
 
   return (
     <div
@@ -73,79 +86,66 @@ const addQuickNote = () => {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="glass-card p-6">
-                <div className="flex justify-between items-center">
-  <h2 className="section-title">Today’s Goals</h2>
+                    <div className="flex justify-between items-center">
+                      <h2 className="section-title">Today’s Goals</h2>
 
- <button
-  onClick={addQuickNote}
-  className="small-btn"
->
-  + New
-</button>
+                      <button onClick={addGoal} className="small-btn">
+                        + Add
+                      </button>
+                    </div>
 
-                  <div className="space-y-4 mt-5 text-sm">
+                    <div className="space-y-4 mt-5 text-sm max-h-[180px] overflow-y-auto">
+                      {goals.length === 0 && (
+                        <p className="opacity-60">No goals added yet.</p>
+                      )}
 
-  {goals.map((goal, index) => (
+                      {goals.map((goal, index) => (
+                        <div
+                          key={index}
+                          className="flex justify-between items-center gap-3"
+                        >
+                          <p>✅ {goal}</p>
 
-    <div
-      key={index}
-      className="flex justify-between items-center"
-    >
+                          <button
+                            onClick={() => deleteGoal(index)}
+                            className="text-red-500 font-bold"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-      <p>✅ {goal}</p>
+                  <div className="glass-card p-6">
+                    <div className="flex justify-between items-center">
+                      <h2 className="section-title">Quick Notes</h2>
 
-      <button
-        onClick={() => {
+                      <button onClick={addQuickNote} className="small-btn">
+                        + New
+                      </button>
+                    </div>
 
-          const updated = goals.filter(
-            (_, i) => i !== index
-          );
+                    <div className="space-y-4 mt-5 text-sm max-h-[180px] overflow-y-auto">
+                      {quickNotes.length === 0 && (
+                        <p className="opacity-60">No quick notes added yet.</p>
+                      )}
 
-          setGoals(updated);
+                      {quickNotes.map((note, index) => (
+                        <div
+                          key={index}
+                          className="flex justify-between items-center gap-3"
+                        >
+                          <p>🟣 {note}</p>
 
-          localStorage.setItem(
-            `goals_${userId}`,
-            JSON.stringify(updated)
-          );
-
-        }}
-        className="text-red-500"
-      >
-        ✕
-      </button>
-
-    </div>
-
-  ))}
-
-</div>
-                    <div className="space-y-4 mt-5 text-sm">
-                     {quickNotes.map((note, index) => (
-  <div
-    key={index}
-    className="flex justify-between items-center"
-  >
-    <p>🟣 {note}</p>
-
-    <button
-      onClick={() => {
-        const updated = quickNotes.filter(
-          (_, i) => i !== index
-        );
-
-        setQuickNotes(updated);
-
-        localStorage.setItem(
-          `quickNotes_${userId}`,
-          JSON.stringify(updated)
-        );
-      }}
-      className="text-red-500"
-    >
-      ✕
-    </button>
-  </div>
-))}
+                          <button
+                            onClick={() => deleteQuickNote(index)}
+                            className="text-red-500 font-bold"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>

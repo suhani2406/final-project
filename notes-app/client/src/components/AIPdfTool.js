@@ -1,4 +1,4 @@
-
+import API from "../api/axios";
 import { useState } from "react";
 
 export default function AIPdfTool() {
@@ -8,46 +8,39 @@ export default function AIPdfTool() {
 
   const BACKEND_URL = "https://final-project-3-qemw.onrender.com";
 
-  const generateFromText = async () => {
-    if (!text.trim()) {
-      alert("Paste some study text first");
-      return;
+const generateFromText = async () => {
+  if (!text.trim()) {
+    alert("Paste some study text first");
+    return;
+  }
 
-    }
-      if (text.length > 12000) {
-  alert("Text too large. Please paste smaller notes.");
-  return;
+  if (text.length > 12000) {
+    alert("Text too large. Please paste smaller notes.");
+    return;
+  }
 
-    }
+  try {
+    setLoading(true);
+    setResult("");
 
-    try {
-      setLoading(true);
-      setResult("");
+    const res = await API.post("/study-ai/text-summary", {
+      text,
+    });
 
-      const res = await fetch(`${BACKEND_URL}/api/study-ai/text-summary`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text }),
-      });
+    setResult(res.data.result);
+  } catch (err) {
+    console.log("AI ERROR FULL:", err.response?.data || err);
 
-      const data = await res.json();
+    alert(
+      err.response?.data?.error?.error?.message ||
+      err.response?.data?.message ||
+      "AI generation failed"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
-      if (!res.ok) {
-        throw new Error(data.message || "AI failed");
-      }
-
-      setResult(data.result);
-    } catch (err) {
-      console.log("AI ERROR:", err);
-     alert(
-  "AI limit reached or server sleeping. Try again in a minute."
-);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="glass-card p-8 max-w-5xl mx-auto">
