@@ -108,7 +108,8 @@ const server = http.createServer(app);
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://yumenote-final.vercel.app/"
+  "https://yumenote-final.vercel.app",
+  "https://yumenote-final-k1zoj2yzc-suhani2406s-projects.vercel.app",
 ];
 
 const io = new Server(server, {
