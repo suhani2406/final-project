@@ -79,7 +79,8 @@ export default function Dashboard() {
         <main className="flex-1 p-6 overflow-y-auto">
          <Header />
 
-<div className="fixed bottom-6 right-6 z-50 w-[320px] hidden xl:block">
+<div className="fixed bottom-6 right-6 z-50 w-[320px] space-y-4">
+  <FocusTimer />
   <MusicPlayer />
 </div>
 
@@ -155,9 +156,7 @@ export default function Dashboard() {
                 </div>
               </section>
 
-             <section className="xl:col-span-4 space-y-4 md:space-y-6">
-  <FocusTimer />
-</section>
+             
             </div>
           )}
 
