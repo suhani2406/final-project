@@ -3,16 +3,16 @@ const router = express.Router();
 const axios = require("axios");
 
 const askAI = async (prompt) => {
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
 
   if (!apiKey) {
-    throw new Error("OPENROUTER_API_KEY missing on server");
+    throw new Error("GROQ_API_KEY missing on server");
   }
 
   const response = await axios.post(
-    "https://openrouter.ai/api/v1/chat/completions",
+    "https://api.groq.com/openai/v1/chat/completions",
     {
-      model: "mistralai/mistral-7b-instruct:free",
+      model: "llama-3.3-70b-versatile",
       messages: [
         {
           role: "user",
@@ -38,9 +38,7 @@ const askAI = async (prompt) => {
 router.get("/test", (req, res) => {
   res.json({
     message: "Study AI route working ✅",
-    hasOpenRouterKey: Boolean(
-      process.env.OPENROUTER_API_KEY
-    ),
+    hasGroqKey: Boolean(process.env.GROQ_API_KEY),
   });
 });
 
@@ -48,18 +46,13 @@ router.get("/stats", async (req, res) => {
   try {
     const User = require("../models/User");
 
-    const totalUsers =
-      await User.countDocuments();
+    const totalUsers = await User.countDocuments();
 
-    const activeUsers =
-      await User.countDocuments({
-        lastLogin: {
-          $gte: new Date(
-            Date.now() -
-              7 * 24 * 60 * 60 * 1000
-          ),
-        },
-      });
+    const activeUsers = await User.countDocuments({
+      lastLogin: {
+        $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      },
+    });
 
     res.json({
       totalUsers,
@@ -72,22 +65,19 @@ router.get("/stats", async (req, res) => {
   }
 });
 
-router.post(
-  "/text-summary",
-  async (req, res) => {
-    try {
-      const { text } = req.body;
+router.post("/text-summary", async (req, res) => {
+  try {
+    const { text } = req.body;
 
-      if (!text || !text.trim()) {
-        return res.status(400).json({
-          message: "No text provided",
-        });
-      }
+    if (!text || !text.trim()) {
+      return res.status(400).json({
+        message: "No text provided",
+      });
+    }
 
-      const safeText =
-        text.slice(0, 3000);
+    const safeText = text.slice(0, 3000);
 
-      const result = await askAI(`
+    const result = await askAI(`
 You are an AI study assistant.
 
 Generate:
@@ -101,24 +91,22 @@ TEXT:
 ${safeText}
 `);
 
-      return res.json({
-        result,
-      });
+    return res.json({
+      result,
+    });
+  } catch (err) {
+    console.log(
+      "TEXT AI ERROR:",
+      err.response?.data || err.message
+    );
 
-    } catch (err) {
-      console.log(
-        "TEXT AI ERROR:",
-        err.response?.data ||
-        err.message
-      );
-
-      return res.status(200).json({
-        result: `
+    return res.status(200).json({
+      result: `
 Summary:
 The AI model is temporarily busy, but your text was received.
 
 Quick Notes:
-${req.body.text.slice(0,500)}
+${req.body.text.slice(0, 500)}
 
 What to revise:
 • Main definition
@@ -129,9 +117,8 @@ What to revise:
 
 Try again after a few seconds for the full AI-generated summary.
 `,
-      });
-    }
+    });
   }
-);
+});
 
 module.exports = router;
