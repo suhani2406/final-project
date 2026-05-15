@@ -77,23 +77,17 @@ export default function Dashboard() {
         <Sidebar activePage={activePage} setActivePage={setActivePage} />
 
         <main className="flex-1 p-6 overflow-y-auto">
-         <Header />
-
-<div className="fixed bottom-6 right-6 z-50 w-[320px] space-y-4">
-  <FocusTimer />
-  <MusicPlayer />
-</div>
+          <Header />
 
           {activePage === "dashboard" && (
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 md:gap-6 mt-6 max-w-[1500px] mx-auto">
-             <section className="xl:col-span-8 space-y-4 md:space-y-6">
+              <section className="xl:col-span-8 space-y-4 md:space-y-6">
                 <MotivationPanel />
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="glass-card p-6">
                     <div className="flex justify-between items-center">
                       <h2 className="section-title">Today’s Goals</h2>
-
                       <button onClick={addGoal} className="small-btn">
                         + Add
                       </button>
@@ -110,7 +104,6 @@ export default function Dashboard() {
                           className="flex justify-between items-center gap-3"
                         >
                           <p>✅ {goal}</p>
-
                           <button
                             onClick={() => deleteGoal(index)}
                             className="text-red-500 font-bold"
@@ -125,7 +118,6 @@ export default function Dashboard() {
                   <div className="glass-card p-6">
                     <div className="flex justify-between items-center">
                       <h2 className="section-title">Quick Notes</h2>
-
                       <button onClick={addQuickNote} className="small-btn">
                         + New
                       </button>
@@ -142,7 +134,6 @@ export default function Dashboard() {
                           className="flex justify-between items-center gap-3"
                         >
                           <p>🟣 {note}</p>
-
                           <button
                             onClick={() => deleteQuickNote(index)}
                             className="text-red-500 font-bold"
@@ -156,7 +147,10 @@ export default function Dashboard() {
                 </div>
               </section>
 
-             
+              <section className="xl:col-span-4 space-y-4 md:space-y-6">
+                <FocusTimer />
+                <MusicPlayer />
+              </section>
             </div>
           )}
 
