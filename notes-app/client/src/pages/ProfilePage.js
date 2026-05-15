@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import API from "../api/axios";
 
 export default function ProfilePage() {
   const avatars = [
@@ -10,75 +11,118 @@ export default function ProfilePage() {
   ];
 
   const fallbackAvatar =
-    "https://api.dicebear.com/7.x/adventurer/svg?seed=YumeNote";
+    "https://wallpapers.com/images/hd/cute-anime-profile-pictures-ocsp6rlknshumiuw.jpg";
 
   const [user, setUser] = useState({});
 
   useEffect(() => {
     const savedUser =
       JSON.parse(localStorage.getItem("user")) || {};
+
     setUser(savedUser);
   }, []);
 
-  const chooseAvatar = (avatar) => {
-    const updatedUser = {
-      ...user,
-      avatar,
-    };
+  const chooseAvatar = async (avatar) => {
+    try {
+      const token =
+        localStorage.getItem("token");
 
-    setUser(updatedUser);
-    localStorage.setItem("user", JSON.stringify(updatedUser));
+      const res = await API.put(
+        "/auth/avatar",
+        { avatar },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setUser(res.data);
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(res.data)
+      );
+
+      alert("Avatar updated ✨");
+    } catch (err) {
+      console.log(
+        "AVATAR ERROR:",
+        err.response?.data || err
+      );
+
+      alert("Avatar update failed");
+    }
   };
 
   return (
     <div className="glass-card p-8 max-w-5xl mx-auto">
-      <h1 className="text-4xl font-black mb-8">Profile ✨</h1>
 
-      <div className="flex flex-col md:flex-row items-center gap-6">
+      <h1 className="text-4xl font-black mb-8">
+        Profile ✨
+      </h1>
+
+      <div className="flex items-center gap-6">
+
         <img
-          src={user.avatar || fallbackAvatar}
+          src={
+            user?.avatar ||
+            fallbackAvatar
+          }
           onError={(e) => {
-            e.currentTarget.src = fallbackAvatar;
+            e.currentTarget.src =
+              fallbackAvatar;
           }}
           alt="profile"
           className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg"
         />
 
-        <div className="text-center md:text-left">
+        <div>
           <h2 className="text-3xl font-black">
-            {user.name || "Guest User"}
+            {user?.name ||
+              "Guest User"}
           </h2>
 
           <p className="text-lg opacity-70">
-            {user.role || "Student"}
+            {user?.role ||
+              "Student"}
           </p>
 
           <p className="text-sm opacity-60">
-            {user.email || ""}
+            {user?.email || ""}
           </p>
         </div>
+
       </div>
 
       <div className="mt-10">
-        <h2 className="text-2xl font-black mb-5">Choose Avatar</h2>
+
+        <h2 className="text-2xl font-black mb-5">
+          Choose Avatar
+        </h2>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
-          {avatars.map((avatar, index) => (
-            <button
-              key={index}
-              onClick={() => chooseAvatar(avatar)}
-              className="rounded-3xl overflow-hidden border-4 border-white hover:scale-105 transition"
-            >
-              <img
-                src={avatar}
-                onError={(e) => {
-                  e.currentTarget.src = fallbackAvatar;
-                }}
-                alt="avatar"
-                className="w-full h-28 object-cover"
-              />
-            </button>
-          ))}
+
+          {avatars.map(
+            (avatar, index) => (
+              <button
+                key={index}
+                onClick={() =>
+                  chooseAvatar(
+                    avatar
+                  )
+                }
+                className="rounded-3xl overflow-hidden border-4 border-white hover:scale-105 transition"
+              >
+                <img
+                  src={avatar}
+                  alt="avatar"
+                  className="w-full h-28 object-cover"
+                />
+              </button>
+            )
+          )}
+
         </div>
       </div>
     </div>

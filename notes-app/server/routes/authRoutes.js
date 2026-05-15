@@ -1,16 +1,3 @@
-// const express = require("express");
-// const router = express.Router();
-
-// const { signup, login } = require("../controllers/authController");
-
-// router.get("/test", (req, res) => {
-//   res.send("Auth route working");
-// });
-
-// router.post("/signup", signup);
-// router.post("/login", login);
-
-// module.exports = router;
 const express = require("express");
 const router = express.Router();
 
@@ -22,18 +9,51 @@ const {
 } = require("../controllers/authController");
 
 const authMiddleware = require("../middleware/authMiddleware");
+const User = require("../models/User");
 
+// test route
 router.get("/test", (req, res) => {
   res.send("Auth route working");
 });
 
+// signup/login
 router.post("/signup", signup);
 router.post("/login", login);
 
-// logged-in user profile
+// logged in user
 router.get("/me", authMiddleware, getMe);
 
-// update avatar/name/role
-router.put("/profile", authMiddleware, updateProfile);
+// update profile
+router.put(
+  "/profile",
+  authMiddleware,
+  updateProfile
+);
+
+// update avatar
+router.put(
+  "/avatar",
+  authMiddleware,
+  async (req, res) => {
+    try {
+      const { avatar } = req.body;
+
+      const user =
+        await User.findByIdAndUpdate(
+          req.user.id,
+          { avatar },
+          { new: true }
+        ).select("-password");
+
+      res.json(user);
+    } catch (err) {
+      console.log(err);
+
+      res.status(500).json({
+        msg: "Avatar update failed",
+      });
+    }
+  }
+);
 
 module.exports = router;
