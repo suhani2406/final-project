@@ -77,7 +77,11 @@ export default function Dashboard() {
         <Sidebar activePage={activePage} setActivePage={setActivePage} />
 
         <main className="flex-1 p-6 overflow-y-auto">
-          <Header />
+         <Header />
+
+<div className="fixed bottom-6 right-6 z-50 w-[320px] hidden xl:block">
+  <MusicPlayer />
+</div>
 
           {activePage === "dashboard" && (
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 md:gap-6 mt-6 max-w-[1500px] mx-auto">
@@ -152,9 +156,8 @@ export default function Dashboard() {
               </section>
 
              <section className="xl:col-span-4 space-y-4 md:space-y-6">
-                <FocusTimer />
-                <MusicPlayer />
-              </section>
+  <FocusTimer />
+</section>
             </div>
           )}
 
