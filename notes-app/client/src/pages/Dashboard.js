@@ -9,7 +9,6 @@ import MusicPlayer from "../components/MusicPlayer";
 import NotesGrid from "../components/NotesGrid";
 import StreakCalendar from "../components/StreakCalendar";
 import AIAssistantPage from "./AIAssistantPage";
-
 import StudyRoomPage from "./StudyRoomPage";
 import ProfilePage from "./ProfilePage";
 
@@ -79,80 +78,86 @@ export default function Dashboard() {
         <main className="flex-1 p-6 overflow-y-auto">
           <Header />
 
-          {activePage === "dashboard" && (
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 md:gap-6 mt-6 max-w-[1500px] mx-auto">
-              <section className="xl:col-span-8 space-y-4 md:space-y-6">
-                <MotivationPanel />
+          <div
+            className={`grid grid-cols-1 xl:grid-cols-12 gap-4 md:gap-6 mt-6 max-w-[1500px] mx-auto ${
+              activePage === "dashboard" ? "block" : "hidden"
+            }`}
+          >
+            <section className="xl:col-span-8 space-y-4 md:space-y-6">
+              <MotivationPanel />
 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="glass-card p-6">
-                    <div className="flex justify-between items-center">
-                      <h2 className="section-title">Today’s Goals</h2>
-                      <button onClick={addGoal} className="small-btn">
-                        + Add
-                      </button>
-                    </div>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="glass-card p-6">
+                  <div className="flex justify-between items-center">
+                    <h2 className="section-title">Today’s Goals</h2>
 
-                    <div className="space-y-4 mt-5 text-sm max-h-[180px] overflow-y-auto">
-                      {goals.length === 0 && (
-                        <p className="opacity-60">No goals added yet.</p>
-                      )}
-
-                      {goals.map((goal, index) => (
-                        <div
-                          key={index}
-                          className="flex justify-between items-center gap-3"
-                        >
-                          <p>✅ {goal}</p>
-                          <button
-                            onClick={() => deleteGoal(index)}
-                            className="text-red-500 font-bold"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      ))}
-                    </div>
+                    <button onClick={addGoal} className="small-btn">
+                      + Add
+                    </button>
                   </div>
 
-                  <div className="glass-card p-6">
-                    <div className="flex justify-between items-center">
-                      <h2 className="section-title">Quick Notes</h2>
-                      <button onClick={addQuickNote} className="small-btn">
-                        + New
-                      </button>
-                    </div>
+                  <div className="space-y-4 mt-5 text-sm max-h-[180px] overflow-y-auto">
+                    {goals.length === 0 && (
+                      <p className="opacity-60">No goals added yet.</p>
+                    )}
 
-                    <div className="space-y-4 mt-5 text-sm max-h-[180px] overflow-y-auto">
-                      {quickNotes.length === 0 && (
-                        <p className="opacity-60">No quick notes added yet.</p>
-                      )}
+                    {goals.map((goal, index) => (
+                      <div
+                        key={index}
+                        className="flex justify-between items-center gap-3"
+                      >
+                        <p>✅ {goal}</p>
 
-                      {quickNotes.map((note, index) => (
-                        <div
-                          key={index}
-                          className="flex justify-between items-center gap-3"
+                        <button
+                          onClick={() => deleteGoal(index)}
+                          className="text-red-500 font-bold"
                         >
-                          <p>🟣 {note}</p>
-                          <button
-                            onClick={() => deleteQuickNote(index)}
-                            className="text-red-500 font-bold"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      ))}
-                    </div>
+                          ✕
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </section>
 
-              <section className="xl:col-span-4 space-y-4 md:space-y-6">
-                <FocusTimer />
-                <MusicPlayer />
-              </section>
-            </div>
-          )}
+                <div className="glass-card p-6">
+                  <div className="flex justify-between items-center">
+                    <h2 className="section-title">Quick Notes</h2>
+
+                    <button onClick={addQuickNote} className="small-btn">
+                      + New
+                    </button>
+                  </div>
+
+                  <div className="space-y-4 mt-5 text-sm max-h-[180px] overflow-y-auto">
+                    {quickNotes.length === 0 && (
+                      <p className="opacity-60">No quick notes added yet.</p>
+                    )}
+
+                    {quickNotes.map((note, index) => (
+                      <div
+                        key={index}
+                        className="flex justify-between items-center gap-3"
+                      >
+                        <p>🟣 {note}</p>
+
+                        <button
+                          onClick={() => deleteQuickNote(index)}
+                          className="text-red-500 font-bold"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="xl:col-span-4 space-y-4 md:space-y-6">
+              <FocusTimer />
+              <MusicPlayer />
+            </section>
+          </div>
 
           {activePage === "notes" && <NotesGrid />}
           {activePage === "ai" && <AIAssistantPage />}
