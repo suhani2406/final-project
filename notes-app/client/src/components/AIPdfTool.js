@@ -6,46 +6,34 @@ export default function AIPdfTool() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState("");
 
-  const BACKEND_URL = "https://final-project-3-qemw.onrender.com";
+  const generateFromText = async () => {
+    if (!text.trim()) {
+      alert("Paste some study text first");
+      return;
+    }
 
-const generateFromText = async () => {
-  if (!text.trim()) {
-    alert("Paste some study text first");
-    return;
-  }
+    if (text.length > 12000) {
+      alert("Text too large. Please paste smaller notes.");
+      return;
+    }
 
-  if (text.length > 12000) {
-    alert("Text too large. Please paste smaller notes.");
-    return;
-  }
+    try {
+      setLoading(true);
+      setResult("");
 
-  try {
-    setLoading(true);
-    setResult("");
+      const res = await API.post("/study-ai/text-summary", {
+        text,
+      });
 
-    const res = await API.post("/study-ai/text-summary", {
-      text,
-    });
+      setResult(res.data.result || "No result received.");
+    } catch (err) {
+      console.log("AI ERROR FULL:", err.response?.data || err);
 
-    setResult(res.data.result);
-  // } catch (err) {
-  //   console.log("AI ERROR FULL:", err.response?.data || err);
-
-  //   alert(
-  //     err.response?.data?.error?.error?.message ||
-  //     err.response?.data?.message ||
-  //     "AI generation failed"
-  //   );
-  // } catch (err) {
-  console.log("AI ERROR FULL:", err.response?.data || err);
-
-  alert("AI daily limit reached. Please try again later.");
-}
-  finally {
-    setLoading(false);
-  }
-};
-
+      alert("AI daily limit reached. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="glass-card p-8 max-w-5xl mx-auto">

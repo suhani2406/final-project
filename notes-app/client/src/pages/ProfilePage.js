@@ -15,7 +15,8 @@ export default function ProfilePage() {
   const [user, setUser] = useState({});
 
   useEffect(() => {
-    const savedUser = JSON.parse(localStorage.getItem("user")) || {};
+    const savedUser =
+      JSON.parse(localStorage.getItem("user")) || {};
     setUser(savedUser);
   }, []);
 
@@ -33,7 +34,7 @@ export default function ProfilePage() {
     <div className="glass-card p-8 max-w-5xl mx-auto">
       <h1 className="text-4xl font-black mb-8">Profile ✨</h1>
 
-      <div className="flex items-center gap-6">
+      <div className="flex flex-col md:flex-row items-center gap-6">
         <img
           src={user.avatar || fallbackAvatar}
           onError={(e) => {
@@ -43,13 +44,15 @@ export default function ProfilePage() {
           className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg"
         />
 
-        <div>
+        <div className="text-center md:text-left">
           <h2 className="text-3xl font-black">
             {user.name || "Guest User"}
           </h2>
+
           <p className="text-lg opacity-70">
             {user.role || "Student"}
           </p>
+
           <p className="text-sm opacity-60">
             {user.email || ""}
           </p>
