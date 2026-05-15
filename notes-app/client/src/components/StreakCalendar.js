@@ -3,37 +3,56 @@ import { useEffect, useState } from "react";
 const days = ["M", "T", "W", "T", "F", "S", "S"];
 
 export default function StreakCalendar() {
-  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const user =
+    JSON.parse(localStorage.getItem("user")) || {};
+
   const userId = user.id || "guest";
 
   const streakKey = `streak_${userId}`;
-  const lastVisitKey = `lastVisit_${userId}`;
+  const studyKey = `lastStudy_${userId}`;
 
   const calculateStreak = () => {
     const today = new Date().toDateString();
-    const lastVisit = localStorage.getItem(lastVisitKey);
-    let currentStreak = Number(localStorage.getItem(streakKey)) || 0;
 
-    if (!lastVisit) {
-      currentStreak = 1;
-    } else if (lastVisit !== today) {
+    const lastStudy =
+      localStorage.getItem(studyKey);
+
+    let currentStreak =
+      Number(localStorage.getItem(streakKey)) || 0;
+
+    if (!lastStudy) {
+      return currentStreak || 0;
+    }
+
+    if (lastStudy === today) {
+      if (currentStreak === 0) {
+        currentStreak = 1;
+      }
+    } else {
       const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
+      yesterday.setDate(
+        yesterday.getDate() - 1
+      );
 
-      if (lastVisit === yesterday.toDateString()) {
+      if (
+        lastStudy ===
+        yesterday.toDateString()
+      ) {
         currentStreak += 1;
       } else {
         currentStreak = 1;
       }
     }
 
-    localStorage.setItem(streakKey, currentStreak);
-    localStorage.setItem(lastVisitKey, today);
+    localStorage.setItem(
+      streakKey,
+      currentStreak
+    );
 
     return currentStreak;
   };
 
-  const [streak, setStreak] = useState(1);
+  const [streak, setStreak] = useState(0);
 
   useEffect(() => {
     setStreak(calculateStreak());
@@ -41,7 +60,9 @@ export default function StreakCalendar() {
 
   return (
     <div className="bg-[#1e293b] border border-white/10 rounded-[35px] p-8">
-      <h2 className="text-3xl font-bold text-white mb-6">Study Streak 🔥</h2>
+      <h2 className="text-3xl font-bold text-white mb-6">
+        Study Streak 🔥
+      </h2>
 
       <div className="grid grid-cols-7 gap-3">
         {days.map((day, index) => (
@@ -60,7 +81,10 @@ export default function StreakCalendar() {
 
       <div className="mt-6 text-lg text-white">
         Current Streak:
-        <span className="font-bold"> {streak} Days</span>
+        <span className="font-bold">
+          {" "}
+          {streak} Days
+        </span>
       </div>
     </div>
   );

@@ -64,8 +64,8 @@ router.get("/", authMiddleware, async (req, res) => {
       members: userId,
     })
       .populate("members", "name email avatar role")
-      .populate("createdBy", "name avatar")
-      .populate("messages.user", "name avatar")
+.populate("createdBy", "name email avatar role")
+.populate("messages.user", "name email avatar role")
       .sort({ createdAt: -1 });
 
     res.json(rooms);

@@ -12,7 +12,7 @@ const askAI = async (prompt) => {
   const response = await axios.post(
     "https://openrouter.ai/api/v1/chat/completions",
     {
-     model: "mistralai/mistral-7b-instruct:free",
+      model: "mistralai/mistral-7b-instruct:free",
       messages: [
         {
           role: "user",
@@ -38,23 +38,56 @@ const askAI = async (prompt) => {
 router.get("/test", (req, res) => {
   res.json({
     message: "Study AI route working ✅",
-    hasOpenRouterKey: Boolean(process.env.OPENROUTER_API_KEY),
+    hasOpenRouterKey: Boolean(
+      process.env.OPENROUTER_API_KEY
+    ),
   });
 });
 
-router.post("/text-summary", async (req, res) => {
+router.get("/stats", async (req, res) => {
   try {
-    const { text } = req.body;
+    const User = require("../models/User");
 
-    if (!text || !text.trim()) {
-      return res.status(400).json({
-        message: "No text provided",
+    const totalUsers =
+      await User.countDocuments();
+
+    const activeUsers =
+      await User.countDocuments({
+        lastLogin: {
+          $gte: new Date(
+            Date.now() -
+              7 * 24 * 60 * 60 * 1000
+          ),
+        },
       });
-    }
 
-    const safeText = text.slice(0, 3000);
+    res.json({
+      totalUsers,
+      activeUsers,
+    });
+  } catch (err) {
+    res.status(500).json({
+      msg: "Stats failed",
+    });
+  }
+});
 
-    const result = await askAI(`
+router.post(
+  "/text-summary",
+  async (req, res) => {
+    try {
+      const { text } = req.body;
+
+      if (!text || !text.trim()) {
+        return res.status(400).json({
+          message: "No text provided",
+        });
+      }
+
+      const safeText =
+        text.slice(0, 3000);
+
+      const result = await askAI(`
 You are an AI study assistant.
 
 Generate:
@@ -68,15 +101,37 @@ TEXT:
 ${safeText}
 `);
 
-    res.json({ result });
-  } catch (err) {
-    console.log("TEXT AI ERROR:", err.response?.data || err.message);
+      return res.json({
+        result,
+      });
 
-    res.status(500).json({
-      message: "AI generation failed",
-      error: err.response?.data || err.message,
-    });
+    } catch (err) {
+      console.log(
+        "TEXT AI ERROR:",
+        err.response?.data ||
+        err.message
+      );
+
+      return res.status(200).json({
+        result: `
+Summary:
+The AI model is temporarily busy, but your text was received.
+
+Quick Notes:
+${req.body.text.slice(0,500)}
+
+What to revise:
+• Main definition
+• Important terms
+• Examples
+• Working/process
+• Short answer practice
+
+Try again after a few seconds for the full AI-generated summary.
+`,
+      });
+    }
   }
-});
+);
 
 module.exports = router;

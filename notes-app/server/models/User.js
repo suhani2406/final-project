@@ -52,6 +52,14 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    loginCount: {
+  type: Number,
+  default: 0,
+},
+
+lastLogin: {
+  type: Date,
+},
 
     weakAreas: [
       {

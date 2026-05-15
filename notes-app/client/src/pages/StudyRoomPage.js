@@ -101,8 +101,24 @@ useEffect(() => {
     );
   }
 };
+const markStudyActivity = () => {
+  const today = new Date().toDateString();
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const userId = user.id || "guest";
+
+  localStorage.setItem(`lastStudy_${userId}`, today);
+
+  const currentMinutes =
+    Number(localStorage.getItem(`studyMinutesToday_${userId}`)) || 0;
+
+  localStorage.setItem(
+    `studyMinutesToday_${userId}`,
+    currentMinutes + 30
+  );
+};
 
   // JOIN ROOM
+  
   const joinRoom = async (id) => {
   try {
     const res = await API.post(
@@ -117,6 +133,8 @@ useEffect(() => {
       )
     );
 
+    markStudyActivity();
+
     alert("Joined room");
   } catch (err) {
     console.log("JOIN ROOM ERROR:", err.response?.data || err);
@@ -125,6 +143,7 @@ useEffect(() => {
 };
 
   // JOIN BY CODE
+  
   const joinByCode = async () => {
   if (!roomCode.trim()) {
     alert("Enter room code");
@@ -155,6 +174,8 @@ useEffect(() => {
     });
 
     setRoomCode("");
+
+    markStudyActivity();
 
     alert("Joined successfully");
   } catch (err) {
@@ -455,19 +476,18 @@ useEffect(() => {
                     className="flex gap-3"
                   >
 
-                    <img
-                      src={
-                        msg.user?.avatar ||
-                        "https://i.pinimg.com/736x/89/ea/6d/89ea6d2a31c9b3c79a9f6f7cfe5f56ff.jpg"
-                      }
-                      alt=""
-                      className="
-                        w-8
-                        h-8
-                        rounded-full
-                        object-cover
-                      "
-                    />
+           <img
+  src={
+    msg.user?.avatar ||
+    "https://wallpapers.com/images/hd/cute-anime-profile-pictures-ocsp6rlknshumiuw.jpg"
+  }
+  onError={(e) => {
+    e.currentTarget.src =
+      "https://wallpapers.com/images/hd/cute-anime-profile-pictures-ocsp6rlknshumiuw.jpg";
+  }}
+  alt=""
+  className="w-8 h-8 rounded-full object-cover"
+/>    
 
                     <div>
 
