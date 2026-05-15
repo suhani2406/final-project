@@ -10,7 +10,7 @@ A full-stack productivity platform inspired by Notion, built to manage notes, fo
 ---
 
 ## 🚀 Live Demo
-> Deployed Application: https://final-project-isj6.vercel.app/notes
+> Deployed Application: https://yumenote-final.vercel.app/
 
 
 ---
