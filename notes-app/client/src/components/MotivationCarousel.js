@@ -13,13 +13,22 @@ const quotes = [
 ];
 
 export default function MotivationCarousel() {
+const user =
+  JSON.parse(localStorage.getItem("user")) || {};
 
-  const randomQuote =
-    quotes[
-      Math.floor(Math.random() * quotes.length)
-    ];
+const streak =
+  localStorage.getItem(
+    `streak_${user.id || "guest"}`
+  ) || 1;
+
+const today =
+  new Date().getDate();
+
+const randomQuote =
+  quotes[today % quotes.length];
 
   return (
+    
 
     <div
       className="
@@ -51,6 +60,9 @@ export default function MotivationCarousel() {
       >
         {randomQuote}
       </p>
+     <p className="text-sm opacity-80 mt-3">
+  🔥 Current streak: {streak} days
+</p>
 
     </div>
   );

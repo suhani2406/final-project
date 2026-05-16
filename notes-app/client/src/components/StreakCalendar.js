@@ -11,14 +11,26 @@ export default function StreakCalendar() {
   const streakKey = `streak_${userId}`;
   const studyKey = `lastStudy_${userId}`;
 
+  const minutes =
+    Number(
+      localStorage.getItem(
+        `studyMinutesToday_${userId}`
+      )
+    ) || 0;
+
   const calculateStreak = () => {
-    const today = new Date().toDateString();
+    const today =
+      new Date().toDateString();
 
     const lastStudy =
       localStorage.getItem(studyKey);
 
     let currentStreak =
-      Number(localStorage.getItem(streakKey)) || 0;
+      Number(
+        localStorage.getItem(
+          streakKey
+        )
+      ) || 0;
 
     if (!lastStudy) {
       return currentStreak || 0;
@@ -29,7 +41,9 @@ export default function StreakCalendar() {
         currentStreak = 1;
       }
     } else {
-      const yesterday = new Date();
+      const yesterday =
+        new Date();
+
       yesterday.setDate(
         yesterday.getDate() - 1
       );
@@ -52,10 +66,13 @@ export default function StreakCalendar() {
     return currentStreak;
   };
 
-  const [streak, setStreak] = useState(0);
+  const [streak, setStreak] =
+    useState(0);
 
   useEffect(() => {
-    setStreak(calculateStreak());
+    setStreak(
+      calculateStreak()
+    );
   }, []);
 
   return (
@@ -65,18 +82,24 @@ export default function StreakCalendar() {
       </h2>
 
       <div className="grid grid-cols-7 gap-3">
-        {days.map((day, index) => (
-          <div
-            key={index}
-            className={`h-14 rounded-2xl flex items-center justify-center font-bold ${
-              index < Math.min(streak, 7)
-                ? "bg-[#d96c52] text-white"
-                : "bg-white/10 text-white/50"
-            }`}
-          >
-            {day}
-          </div>
-        ))}
+        {days.map(
+          (day, index) => (
+            <div
+              key={index}
+              className={`h-14 rounded-2xl flex items-center justify-center font-bold ${
+                index <
+                Math.min(
+                  streak,
+                  7
+                )
+                  ? "bg-[#d96c52] text-white"
+                  : "bg-white/10 text-white/50"
+              }`}
+            >
+              {day}
+            </div>
+          )
+        )}
       </div>
 
       <div className="mt-6 text-lg text-white">
@@ -84,6 +107,14 @@ export default function StreakCalendar() {
         <span className="font-bold">
           {" "}
           {streak} Days
+        </span>
+      </div>
+
+      <div className="mt-3 text-lg text-white">
+        Study Time Today:
+        <span className="font-bold">
+          {" "}
+          {minutes} min
         </span>
       </div>
     </div>

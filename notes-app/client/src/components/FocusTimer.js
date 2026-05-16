@@ -2,9 +2,31 @@ import { useEffect, useState } from "react";
 import { Play, RotateCcw } from "lucide-react";
 
 export default function FocusTimer() {
-  const [seconds, setSeconds] = useState(30 * 60);
+  const FOCUS_TIME = 30 * 60;
+  const BREAK_TIME = 10 * 60;
+
+  const [seconds, setSeconds] = useState(FOCUS_TIME);
   const [running, setRunning] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
+
+  const saveStudyTime = () => {
+    const user = JSON.parse(localStorage.getItem("user")) || {};
+    const userId = user.id || "guest";
+    const today = new Date().toDateString();
+
+    const lastSavedDate = localStorage.getItem(`studySavedDate_${userId}`);
+
+    if (lastSavedDate !== today) {
+      localStorage.setItem(`studyMinutesToday_${userId}`, "0");
+      localStorage.setItem(`studySavedDate_${userId}`, today);
+    }
+
+    const currentMinutes =
+      Number(localStorage.getItem(`studyMinutesToday_${userId}`)) || 0;
+
+    localStorage.setItem(`studyMinutesToday_${userId}`, currentMinutes + 30);
+    localStorage.setItem(`lastStudy_${userId}`, today);
+  };
 
   useEffect(() => {
     if (!running) return;
@@ -13,13 +35,14 @@ export default function FocusTimer() {
       setSeconds((prev) => {
         if (prev <= 1) {
           if (!isBreak) {
+            saveStudyTime();
             setIsBreak(true);
-            return 10 * 60;
+            return BREAK_TIME;
           }
 
           setRunning(false);
           setIsBreak(false);
-          return 30 * 60;
+          return FOCUS_TIME;
         }
 
         return prev - 1;
@@ -31,6 +54,9 @@ export default function FocusTimer() {
 
   const min = Math.floor(seconds / 60);
   const sec = seconds % 60;
+
+  const totalTime = isBreak ? BREAK_TIME : FOCUS_TIME;
+  const progress = ((totalTime - seconds) / totalTime) * 100;
 
   return (
     <div className="glass-card p-7">
@@ -55,7 +81,7 @@ export default function FocusTimer() {
 
         <button
           onClick={() => {
-            setSeconds(30 * 60);
+            setSeconds(FOCUS_TIME);
             setRunning(false);
             setIsBreak(false);
           }}
@@ -72,10 +98,15 @@ export default function FocusTimer() {
         </div>
 
         <div className="w-full h-3 bg-white/50 rounded-full">
-          <div className="h-3 w-[42%] bg-[#d95f4c] rounded-full" />
+          <div
+            className="h-3 bg-[#d95f4c] rounded-full transition-all"
+            style={{ width: `${progress}%` }}
+          />
         </div>
 
-        <p className="text-sm mt-5 opacity-70">Focus 30 min · Break 10 min</p>
+        <p className="text-sm mt-5 opacity-70">
+          Focus 30 min · Break 10 min
+        </p>
       </div>
     </div>
   );
