@@ -1,11 +1,11 @@
 import {
   LayoutDashboard, StickyNote, Folder, Heart, Brain,
-  BarChart3, Users, User, Settings, Moon, LogOut, Sparkles,
+  BarChart3, Users, User, Settings, Moon, LogOut, Sparkles, X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 
-export default function Sidebar({ activePage, setActivePage }) {
+export default function Sidebar({ activePage, setActivePage, mobileOpen, onClose }) {
   const { darkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
@@ -36,25 +36,35 @@ export default function Sidebar({ activePage, setActivePage }) {
     navigate("/");
   };
 
-  return (
-    <aside
-      className={`hidden lg:flex w-[270px] min-h-screen p-6 backdrop-blur-xl rounded-r-[32px] flex-col justify-between shadow-xl transition-colors ${
-        darkMode
-          ? "bg-[#0f1424]/90 text-gray-200 border-r border-white/5"
-          : "bg-white/75 text-[#2f2420]"
-      }`}
-    >
+  const handleSelect = (value) => {
+    setActivePage(value);
+    onClose?.();
+  };
+
+  const sidebarContent = (
+    <>
       <div>
-        <h1 className="text-3xl font-black">YumeNote 🌸</h1>
-        <p className={`text-sm mt-1 ${darkMode ? "text-gray-400" : "opacity-70"}`}>
-          Your peaceful workspace
-        </p>
+        <div className="flex items-center justify-between lg:block">
+          <div>
+            <h1 className="text-3xl font-black">YumeNote 🌸</h1>
+            <p className={`text-sm mt-1 ${darkMode ? "text-gray-400" : "opacity-70"}`}>
+              Your peaceful workspace
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="lg:hidden w-9 h-9 rounded-xl flex items-center justify-center hover:bg-white/10"
+            aria-label="Close menu"
+          >
+            <X size={20} />
+          </button>
+        </div>
 
         <div className="mt-10 space-y-3">
           {menu.map((item) => (
             <button
               key={item.value}
-              onClick={() => setActivePage(item.value)}
+              onClick={() => handleSelect(item.value)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition ${
                 activePage === item.value
                   ? "bg-[#d95f4c] text-white shadow-lg"
@@ -91,7 +101,7 @@ export default function Sidebar({ activePage, setActivePage }) {
         </button>
 
         <button
-          onClick={() => setActivePage("profile")}
+          onClick={() => handleSelect("profile")}
           className={`w-full flex items-center gap-3 rounded-2xl p-4 text-left ${
             darkMode ? "bg-white/5" : "bg-white/60"
           }`}
@@ -119,6 +129,41 @@ export default function Sidebar({ activePage, setActivePage }) {
           Logout
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar — unchanged behavior */}
+      <aside
+        className={`hidden lg:flex w-[270px] min-h-screen p-6 backdrop-blur-xl rounded-r-[32px] flex-col justify-between shadow-xl transition-colors ${
+          darkMode
+            ? "bg-[#0f1424]/90 text-gray-200 border-r border-white/5"
+            : "bg-white/75 text-[#2f2420]"
+        }`}
+      >
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile drawer + backdrop */}
+      {mobileOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/50 z-40"
+          onClick={onClose}
+        />
+      )}
+
+      <aside
+        className={`lg:hidden fixed top-0 left-0 h-screen w-[280px] max-w-[85vw] p-6 backdrop-blur-xl flex flex-col justify-between shadow-2xl z-50 transition-transform duration-300 ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        } ${
+          darkMode
+            ? "bg-[#0f1424]/95 text-gray-200 border-r border-white/5"
+            : "bg-white/95 text-[#2f2420]"
+        }`}
+      >
+        {sidebarContent}
+      </aside>
+    </>
   );
 }
