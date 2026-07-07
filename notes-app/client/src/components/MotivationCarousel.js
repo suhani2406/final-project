@@ -1,69 +1,74 @@
-const quotes = [
+const motivationData = [
+  {
+    image:
+      "https://thumbs.dreamstime.com/b/serene-study-session-anime-girl-studying-desk-laptop-headphones-anime-girl-studying-her-desk-sunlit-room-351600178.jpg?w=992",
+    title: "Today's Focus ✨",
+    quote: "Small progress every day leads to big results.",
+    sub: "Keep going, you're doing great!",
+  },
 
-  "Small steps every day build massive results ✨",
+  {
+    image:
+      "https://wallpaperaccess.com/full/8351146.jpg",
+    title: "Believe 🌸",
+    quote: "Success is built from tiny victories repeated daily.",
+    sub: "Trust the process.",
+  },
 
-  "Consistency creates elegance.",
+  {
+    image:
+      "https://wallpapers.com/images/hd/boy-studying-with-moonlight-study-aesthetic-na9lvbq3o682akx9.jpg",
+    title: "Keep Building 🚀",
+    quote: "Discipline will carry you when motivation disappears.",
+    sub: "One more session today.",
+  },
 
-  "Discipline beats motivation.",
+  {
+    image:
+      "https://wallpaperaccess.com/full/2870035.jpg",
+    title: "Dream Bigger ☁️",
+    quote: "The future depends on what you do today.",
+    sub: "Don't stop now.",
+  },
 
-  "You are building your dream life slowly 🌸",
+  {
+    image:
+      "https://i.pinimg.com/originals/a7/f7/0b/a7f70b0e09b4e48ded3a11786d583385.png",
+    title: "One Step More 💙",
+    quote: "Consistency beats intensity.",
+    sub: "Just keep showing up.",
+  },
 
-  "Focus. Build. Repeat.",
-
+  {
+    image:
+      "https://i.pinimg.com/originals/e6/8a/b9/e68ab92e28fa048b398cb5ba76cca8c1.jpg",
+    title: "You're Growing 🌼",
+    quote: "Every expert was once a beginner.",
+    sub: "Be proud of today's effort.",
+  },
 ];
 
 export default function MotivationCarousel() {
-const user =
-  JSON.parse(localStorage.getItem("user")) || {};
+  const user =
+    JSON.parse(localStorage.getItem("user")) || {};
 
-const streak =
-  localStorage.getItem(
-    `streak_${user.id || "guest"}`
-  ) || 1;
+  const userId = user.id || "guest";
 
-const today =
-  new Date().getDate();
+  const streak =
+    Number(
+      localStorage.getItem(`streak_${userId}`)
+    ) || 0;
 
-const randomQuote =
-  quotes[today % quotes.length];
+  const today = new Date().getDate();
 
-  return (
-    
+  const current =
+    motivationData[today % motivationData.length];
 
-    <div
-      className="
-      glass
-      p-8
-      min-h-[180px]
-      flex
-      flex-col
-      justify-center
-      animate-pulse
-    "
-    >
-
-      <h1
-        className="
-        text-5xl
-        font-black
-        mb-4
-      "
-      >
-        Today's Focus ✨
-      </h1>
-
-      <p
-        className="
-        text-xl
-        text-[#5f4b45]
-      "
-      >
-        {randomQuote}
-      </p>
-     <p className="text-sm opacity-80 mt-3">
-  🔥 Current streak: {streak} days
-</p>
-
-    </div>
-  );
+  return {
+    ...current,
+    streak,
+    slide:
+      (today % motivationData.length) + 1,
+    total: motivationData.length,
+  };
 }

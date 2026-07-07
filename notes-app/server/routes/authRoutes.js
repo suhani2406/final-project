@@ -6,6 +6,9 @@ const {
   login,
   getMe,
   updateProfile,
+  forgotPassword,
+  verifyOtp,
+  resetPassword,
 } = require("../controllers/authController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -19,6 +22,10 @@ router.get("/test", (req, res) => {
 // signup/login
 router.post("/signup", signup);
 router.post("/login", login);
+//pass
+router.post("/forgot-password", forgotPassword);
+router.post("/verify-otp", verifyOtp);
+router.post("/reset-password", resetPassword);
 
 // logged in user
 router.get("/me", authMiddleware, getMe);

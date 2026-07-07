@@ -22,11 +22,11 @@ export default function ProgressChart() {
       <div className="flex items-end gap-4 h-[260px]">
         {data.map((item, index) => (
           <div key={index} className="flex-1 flex flex-col items-center gap-3">
-            <div className="text-white text-sm font-bold">
+            <div className="text-black text-sm font-bold">
               {item.minutes} min
             </div>
 
-            <div className="w-full h-[210px] bg-white/10 rounded-2xl flex items-end overflow-hidden">
+            <div className="w-full h-[210px] bg-black/10 rounded-2xl flex items-end overflow-hidden">
               <div
                 className="w-full bg-[#d96c52] rounded-2xl"
                 style={{
@@ -35,7 +35,7 @@ export default function ProgressChart() {
               />
             </div>
 
-            <div className="text-white/70 text-sm">{item.day}</div>
+            <div className="text-black/70 text-sm">{item.day}</div>
           </div>
         ))}
       </div>
