@@ -12,33 +12,35 @@ const Login = () => {
 
   const handleLogin = async () => {
   try {
+    const res = await API.post("/auth/login", { email, password });
 
-    const res = await API.post(
-      "/auth/login",
-      {
-        email,
-        password,
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
+
+    // One-time sync: push whatever streak is already sitting in this browser's
+    // localStorage up to the backend, so the leaderboard reflects it immediately
+    const userId = res.data.user.id;
+    const localStreak = Number(localStorage.getItem(`streak_${userId}`)) || 0;
+    const localLongest = Number(localStorage.getItem(`longestStreak_${userId}`)) || 0;
+
+    if (localStreak > 0 || localLongest > 0) {
+      try {
+        await API.put(
+          "/auth/sync-streak",
+          { streak: localStreak, longestStreak: localLongest },
+          { headers: { Authorization: `Bearer ${res.data.token}` } }
+        );
+      } catch (syncErr) {
+        console.log("Streak sync on login failed:", syncErr);
+        // non-blocking — don't stop login if this fails
       }
-    );
-
-    // TOKEN
-    localStorage.setItem(
-      "token",
-      res.data.token
-    );
-
-    // USER DATA
-    localStorage.setItem(
-      "user",
-      JSON.stringify(res.data.user)
-    );
+    }
 
     navigate("/notes");
-
   } catch (err) {
-  console.log("LOGIN ERROR:", err.response?.data || err);
-  alert(err.response?.data?.msg || "Login failed");
-}
+    console.log("LOGIN ERROR:", err.response?.data || err);
+    alert(err.response?.data?.msg || "Login failed");
+  }
 };
 
   return (

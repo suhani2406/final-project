@@ -203,7 +203,51 @@ exports.verifyOtp = async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 };
+/* =========================================================
+   SYNC STREAK — client pushes its local streak up to the DB
+========================================================= */
+exports.syncStreak = async (req, res) => {
+  try {
+    const { streak, longestStreak } = req.body;
 
+    const user = await User.findById(
+      req.user.id || req.user._id || req.user
+    );
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    if (typeof streak === "number") user.streak = streak;
+    if (typeof longestStreak === "number") {
+      user.longestStreak = Math.max(user.longestStreak || 0, longestStreak);
+    }
+
+    await user.save();
+
+    res.json({ msg: "Streak synced", streak: user.streak, longestStreak: user.longestStreak });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ msg: "Server error" });
+  }
+};
+
+/* =========================================================
+   LEADERBOARD — top users by current streak
+========================================================= */
+exports.getLeaderboard = async (req, res) => {
+  try {
+    const topUsers = await User.find({})
+      .sort({ streak: -1 })
+      .limit(20)
+      .select("name avatar streak longestStreak");
+
+    res.json(topUsers);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ msg: "Server error" });
+  }
+};
 /* =========================================================
    RESET PASSWORD
 ========================================================= */

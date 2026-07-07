@@ -27,6 +27,14 @@ otp: {
 otpExpires: {
   type: Date,
 },
+streak: {
+  type: Number,
+  default: 0,
+},
+longestStreak: {
+  type: Number,
+  default: 0,
+},
     password: {
       type: String,
       required: true,

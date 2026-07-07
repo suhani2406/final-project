@@ -1,3 +1,4 @@
+import API from "../api/axios";
 import {
   createContext,
   useCallback,
@@ -49,6 +50,7 @@ export const TimerProvider = ({ children }) => {
   }, []);
 
   // NEW: credit exactly 1 minute, called every 60s of active focus time
+  
   const creditOneMinute = useCallback(() => {
     const userId = getUserId();
     ensureFreshDay(userId);
@@ -61,33 +63,42 @@ export const TimerProvider = ({ children }) => {
     localStorage.setItem(`studyWeek_${userId}`, weekMinutes + 1);
 
     localStorage.setItem(`lastStudy_${userId}`, new Date().toDateString());
+    const totalKey = `studyTotalMinutes_${userId}`;
+const totalMinutes = Number(localStorage.getItem(totalKey)) || 0;
+localStorage.setItem(totalKey, totalMinutes + 1);
 
     window.dispatchEvent(new Event("study-data-updated"));
   }, [ensureFreshDay, ensureFreshWeek]);
 
-  const bumpStreak = useCallback((userId) => {
-    const today = new Date().toDateString();
-    const lastKey = `lastStreakDate_${userId}`;
-    const streakKey = `streak_${userId}`;
-    const longestKey = `longestStreak_${userId}`;
+const bumpStreak = useCallback((userId) => {
+  const today = new Date().toDateString();
+  const lastKey = `lastStreakDate_${userId}`;
+  const streakKey = `streak_${userId}`;
+  const longestKey = `longestStreak_${userId}`;
 
-    const lastDate = localStorage.getItem(lastKey);
-    if (lastDate === today) return;
+  const lastDate = localStorage.getItem(lastKey);
+  if (lastDate === today) return;
 
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const wasYesterday = lastDate === yesterday.toDateString();
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const wasYesterday = lastDate === yesterday.toDateString();
 
-    const currentStreak = wasYesterday
-      ? Number(localStorage.getItem(streakKey) || 0) + 1
-      : 1;
+  const currentStreak = wasYesterday
+    ? Number(localStorage.getItem(streakKey) || 0) + 1
+    : 1;
 
-    const longest = Math.max(currentStreak, Number(localStorage.getItem(longestKey) || 0));
+  const longest = Math.max(currentStreak, Number(localStorage.getItem(longestKey) || 0));
 
-    localStorage.setItem(streakKey, String(currentStreak));
-    localStorage.setItem(longestKey, String(longest));
-    localStorage.setItem(lastKey, today);
-  }, []);
+  localStorage.setItem(streakKey, String(currentStreak));
+  localStorage.setItem(longestKey, String(longest));
+  localStorage.setItem(lastKey, today);
+
+  // NEW: push to backend so the leaderboard reflects this
+  API.put("/auth/sync-streak", {
+    streak: currentStreak,
+    longestStreak: longest,
+  }).catch((err) => console.log("Streak sync failed:", err));
+}, []);
 
   // Called once a full 30-min block completes: streak only (minutes already credited live)
   const completeFocusBlock = useCallback(() => {

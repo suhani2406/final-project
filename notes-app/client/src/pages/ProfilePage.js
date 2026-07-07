@@ -8,6 +8,9 @@ export default function ProfilePage() {
     "https://wallpapers.com/images/hd/demon-slayer-nezuko-cute-cat-ears-pd7rxjcgd8excl1z.jpg",
     "https://cdn.theanimegallery.com/theanimegallery/731ba0ab-80a2-41e9-aa2a-ae3f8d1e4b3b-cute-demon-slayer-wallpaper.webp",
     "https://wallpaperbat.com/img/1511198-pretty-anime-girl-pink-wallpaper-girl-wallpaper-iphone.jpg",
+    "https://cdn.mos.cms.futurecdn.net/LRqyLSTCUTXaZSbEmzjDs5.jpg",
+    "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2024/10/arcane-season-2-character-death-theory.jpg",
+    "https://static0.gamerantimages.com/wordpress/wp-content/uploads/wm/2024/10/arcane-season-2-jinx-gamerant-visual.jpg",
   ];
 
   const fallbackAvatar =

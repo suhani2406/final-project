@@ -10,7 +10,7 @@ const ROOMS = [
     gradient: "from-[#5b3fae] to-[#2b2f6b]",
     accent: "#b39ddb",
     image:
-      "https://img.freepik.com/premium-photo/anime-study-room-night_899449-276857.jpg",
+      "https://wallpapercave.com/wp/wp9386646.jpg",
   },
   {
     id: "darkacademia",
@@ -19,7 +19,7 @@ const ROOMS = [
     gradient: "from-[#8a5a1f] to-[#3d2b12]",
     accent: "#e0a95c",
     image:
-      "https://img.freepik.com/premium-photo/anime-boy-studying-library_1031776-514.jpg",
+      "https://mycottagecore.com/wp-content/uploads/2023/12/dark-academia-room.webp",
   },
   {
     id: "tokyocafe",
@@ -28,7 +28,7 @@ const ROOMS = [
     gradient: "from-[#5c1f4e] to-[#241033]",
     accent: "#f48fb1",
     image:
-      "https://img.freepik.com/premium-photo/cute-anime-girl-reading-book-studying_1186913-6025.jpg",
+      "https://i.ytimg.com/vi/XexU562EVOE/maxresdefault.jpg",
   },
   {
     id: "cozylibrary",
@@ -37,7 +37,7 @@ const ROOMS = [
     gradient: "from-[#3d4a2e] to-[#1c2416]",
     accent: "#c9d97a",
     image:
-      "https://img.freepik.com/premium-photo/anime-study-room-night_899449-276857.jpg",
+      "https://wallpapers.com/images/hd/cozy-home-library-nook-7q0xng9mvarvo8di.jpg",
   },
   {
     id: "nightowl",
@@ -46,7 +46,7 @@ const ROOMS = [
     gradient: "from-[#1f3a5c] to-[#0d1b2e]",
     accent: "#6ec6ff",
     image:
-      "https://img.freepik.com/premium-photo/anime-boy-studying-library_1031776-514.jpg",
+      "https://tse4.mm.bing.net/th/id/OIP.vaPGKMcy0SUrQ4vsTWxuqgHaEK?pid=Api&P=0&h=180",
   },
   {
     id: "sakura",
@@ -55,7 +55,7 @@ const ROOMS = [
     gradient: "from-[#7a2035] to-[#33101a]",
     accent: "#ff8fa3",
     image:
-      "https://img.freepik.com/premium-photo/cute-anime-girl-reading-book-studying_1186913-6025.jpg",
+      "https://images.stockcake.com/public/7/8/6/7868a9c5-cc72-4094-b90c-b24d3d46327b_large/sakura-study-sanctuary-stockcake.jpg",
   },
 ];
 function FocusSession({ room, onExit }) {
@@ -77,13 +77,14 @@ function FocusSession({ room, onExit }) {
   const progress = ((totalTime - seconds) / totalTime) * 100;
 
   return (
-    <div className="relative min-h-[80vh] rounded-[35px] overflow-hidden">
+    <div className="fixed inset-0 z-40">
       <img
         src={room.image}
         alt=""
         className="absolute inset-0 w-full h-full object-cover"
       />
-      <div className="absolute inset-0 bg-black/35" />
+      {/* Gradient instead of flat overlay — keeps top/bottom moody, center clearer */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/60" />
 
       <button
         onClick={onExit}
@@ -97,9 +98,17 @@ function FocusSession({ room, onExit }) {
         <Users size={16} />1 here
       </div>
 
-      <div className="absolute inset-0 z-10 flex items-center justify-center">
-        <div className="glass-card w-[420px] p-7 text-center">
-          <h2 className="section-title">
+      <div className="absolute inset-0 z-10 flex items-center justify-center p-4">
+        <div
+          className="w-full max-w-[420px] p-7 text-center rounded-[32px] border backdrop-blur-xl"
+          style={{
+            background: "rgba(10, 10, 20, 0.55)",
+            borderColor: `${room.accent}40`,
+            boxShadow: `0 20px 60px rgba(0,0,0,0.5)`,
+            color: "#f5ead0",
+          }}
+        >
+          <h2 className="text-2xl font-black">
             {room.name} {isBreak ? "· Break" : "🎧"}
           </h2>
           <p className="text-sm opacity-70 mt-1">Pomodoro Timer</p>
@@ -112,7 +121,8 @@ function FocusSession({ room, onExit }) {
             <button
               onClick={() => setRunning(true)}
               disabled={running}
-              className="main-btn flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 rounded-2xl font-semibold flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition"
+              style={{ background: room.accent, color: "#1a1a1a" }}
             >
               <Play size={16} /> Start
             </button>
@@ -120,7 +130,7 @@ function FocusSession({ room, onExit }) {
             <button
               onClick={() => setRunning(false)}
               disabled={!running}
-              className="secondary-btn disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-3 rounded-2xl font-semibold bg-white/10 hover:bg-white/20 disabled:opacity-40 disabled:cursor-not-allowed transition"
             >
               Stop
             </button>
@@ -131,26 +141,26 @@ function FocusSession({ room, onExit }) {
                 setRunning(false);
                 setIsBreak(false);
               }}
-              className="secondary-btn"
+              className="px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 transition"
             >
               <RotateCcw size={16} />
             </button>
           </div>
 
           <div className="mt-7">
-            <div className="flex justify-between text-sm font-semibold mb-2">
+            <div className="flex justify-between text-sm font-semibold mb-2 opacity-80">
               <span>Session</span>
               <span>{isBreak ? "Break Time" : "Focus Time"}</span>
             </div>
 
-            <div className="w-full h-3 bg-white/50 rounded-full">
+            <div className="w-full h-2.5 bg-white/15 rounded-full overflow-hidden">
               <div
-                className="h-3 rounded-full transition-all"
+                className="h-full rounded-full transition-all"
                 style={{ width: `${progress}%`, background: room.accent }}
               />
             </div>
 
-            <p className="text-sm mt-5 opacity-70">
+            <p className="text-sm mt-5 opacity-60">
               Focus {FOCUS_TIME / 60} min · Break {BREAK_TIME / 60} min
             </p>
           </div>
