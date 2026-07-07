@@ -249,6 +249,42 @@ exports.getLeaderboard = async (req, res) => {
   }
 };
 /* =========================================================
+   DELETE ACCOUNT — requires password confirmation
+========================================================= */
+exports.deleteAccount = async (req, res) => {
+  const { password } = req.body;
+
+  try {
+    const user = await User.findById(
+      req.user.id || req.user._id || req.user
+    );
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    if (!password) {
+      return res.status(400).json({ msg: "Password is required to delete your account" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ msg: "Incorrect password" });
+    }
+
+    await User.findByIdAndDelete(user._id);
+
+    // TODO: if you want to also delete this user's notes, study rooms, etc.,
+    // add those deletions here (e.g. Note.deleteMany({ userId: user._id }))
+
+    res.json({ msg: "Account deleted successfully" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ msg: "Server error" });
+  }
+};
+/* =========================================================
    RESET PASSWORD
 ========================================================= */
 

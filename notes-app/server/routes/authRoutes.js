@@ -11,6 +11,8 @@ const {
   resetPassword,
   syncStreak,
   getLeaderboard,
+    deleteAccount,
+
 } = require("../controllers/authController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -20,6 +22,8 @@ const User = require("../models/User");
 router.get("/test", (req, res) => {
   res.send("Auth route working");
 });
+router.delete("/delete-account", authMiddleware, deleteAccount);
+
 
 router.put("/sync-streak", authMiddleware, syncStreak);
 router.get("/leaderboard", getLeaderboard); // public — no auth needed to view rankings
