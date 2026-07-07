@@ -1,4 +1,5 @@
 import AmbientRoomPage from "../components/ambient/AmbientRoomPage";
+import SettingsPage from "./SettingsPage";
 import ProgressPage from "./ProgressPage";
 import { useTheme } from "../context/ThemeContext";
 import { useState, useRef } from "react";
@@ -242,6 +243,9 @@ export default function Dashboard() {
           <div className={activePage === "ambientroom" ? "block mt-6" : "hidden"}>
             <AmbientRoomPage />
           </div>
+          <div className={activePage === "settings" ? "block mt-6" : "hidden"}>
+  <SettingsPage />
+</div>
 
           <div className={activePage === "notes" ? "block mt-6" : "hidden"}>
             <NotesGrid />
