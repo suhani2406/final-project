@@ -1,4 +1,3 @@
-
 console.log("RUNNING CORRECT SERVER FILE");
 
 require("dotenv").config();
@@ -12,15 +11,37 @@ const { Server } = require("socket.io");
 const app = express();
 const server = http.createServer(app);
 
-const allowedOrigins = [
+// Explicit known origins (local dev + your stable/production domain if you have one)
+const explicitAllowedOrigins = [
   "http://localhost:3000",
   "https://yumenote-final.vercel.app",
   "https://yumenote-final-k1zoj2yzc-suhani2406s-projects.vercel.app",
+  "https://final-project-vxni.vercel.app",
 ];
+
+// Dynamic check: allow any *.vercel.app domain automatically (covers new preview URLs)
+const isOriginAllowed = (origin) => {
+  if (!origin) return true; // allow non-browser requests (curl, Postman, server-to-server)
+  if (explicitAllowedOrigins.includes(origin)) return true;
+  if (/^https:\/\/[a-zA-Z0-9-]+\.vercel\.app$/.test(origin)) return true;
+  return false;
+};
+
+const corsOptionsDelegate = (req, callback) => {
+  const origin = req.header("Origin");
+  if (isOriginAllowed(origin)) {
+    callback(null, { origin: true, credentials: true });
+  } else {
+    callback(new Error("Not allowed by CORS"));
+  }
+};
 
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (isOriginAllowed(origin)) callback(null, true);
+      else callback(new Error("Not allowed by CORS"));
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   },
@@ -33,12 +54,7 @@ const studyAiRoutes = require("./routes/studyAiRoutes");
 const studyRoomRoutes = require("./routes/studyRoomRoutes");
 
 // MIDDLEWARE
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-  })
-);
+app.use(cors(corsOptionsDelegate));
 
 app.use(express.json());
 

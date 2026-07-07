@@ -140,7 +140,7 @@ export default function Dashboard() {
         }
       `}</style>
 
-      {/* Single flex row: Sidebar + Main. Sidebar handles its own mobile drawer via mobileOpen/onClose */}
+      {/* Single flex row: Sidebar + Main */}
       <div className="relative z-10 flex w-full min-h-screen">
         <Sidebar
           activePage={activePage}
@@ -238,9 +238,10 @@ export default function Dashboard() {
               </div>
             </section>
           </div>
+
           <div className={activePage === "ambientroom" ? "block mt-6" : "hidden"}>
-  <AmbientRoomPage />
-</div>
+            <AmbientRoomPage />
+          </div>
 
           <div className={activePage === "notes" ? "block mt-6" : "hidden"}>
             <NotesGrid />
