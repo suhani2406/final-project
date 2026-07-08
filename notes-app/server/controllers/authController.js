@@ -231,6 +231,23 @@ exports.syncStreak = async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 };
+exports.getLeaderboard = async (req, res) => {
+  try {
+    res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.set("Pragma", "no-cache");
+    res.set("Expires", "0");
+
+    const topUsers = await User.find({})
+      .sort({ streak: -1 })
+      .limit(20)
+      .select("name avatar streak longestStreak");
+
+    res.json(topUsers);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ msg: "Server error" });
+  }
+};
 
 /* =========================================================
    LEADERBOARD — top users by current streak
