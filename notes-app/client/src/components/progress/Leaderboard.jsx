@@ -7,7 +7,7 @@ export default function Leaderboard() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    API.get("/auth/leaderboard")
+    API.get(`/auth/leaderboard?t=${Date.now()}`)
       .then((res) => setUsers(res.data))
       .catch(() => setError(true))
       .finally(() => setLoading(false));
@@ -30,7 +30,9 @@ export default function Leaderboard() {
       {error && <p className="opacity-70">Couldn't load leaderboard right now.</p>}
 
       {!loading && !error && users.length === 0 && (
-        <p className="opacity-70">No streaks yet — be the first!</p>
+        <p className="opacity-70">
+          No streaks yet — start a study session to be the first on the board!
+        </p>
       )}
 
       {!loading && !error && users.length > 0 && (
@@ -49,7 +51,10 @@ export default function Leaderboard() {
                     {medalFor(index)}
                   </span>
                   <img
-                    src={u.avatar || "https://wallpapers.com/images/hd/cute-anime-profile-pictures-ocsp6rlknshumiuw.jpg"}
+                    src={
+                      u.avatar ||
+                      "https://wallpapers.com/images/hd/cute-anime-profile-pictures-ocsp6rlknshumiuw.jpg"
+                    }
                     alt=""
                     className="w-10 h-10 rounded-full object-cover"
                   />
