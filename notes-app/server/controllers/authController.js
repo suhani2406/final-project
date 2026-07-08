@@ -269,22 +269,7 @@ exports.getLeaderboard = async (req, res) => {
   }
 };
 
-/* =========================================================
-   LEADERBOARD — top users by current streak
-========================================================= */
-exports.getLeaderboard = async (req, res) => {
-  try {
-    const topUsers = await User.find({})
-      .sort({ streak: -1 })
-      .limit(20)
-      .select("name avatar streak longestStreak");
 
-    res.json(topUsers);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ msg: "Server error" });
-  }
-};
 /* =========================================================
    DELETE ACCOUNT — requires password confirmation
 ========================================================= */
